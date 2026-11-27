@@ -135,46 +135,85 @@ def palm(x, base_y, crown_dx, crown_y, scale, flip, delay):
     return f'<g>{sway}{trunk}{"".join(leaves)}</g>'
 
 
-def skyline(x0, x1, base, seed, tall):
+def skyline(x0, x1, base, seed, tall, fill="#21094A", wins=True):
     rnd = random.Random(seed)
-    out, wins, x = [], [], x0
+    out, wl, x = [], [], x0
     while x < x1:
         w = rnd.randint(22, 44)
         h = rnd.randint(30, tall)
-        out.append(f'<rect x="{x}" y="{base - h}" width="{w}" height="{h + 2}" fill="#21094A"/>')
+        out.append(f'<rect x="{x}" y="{base - h}" width="{w}" height="{h + 2}" fill="{fill}"/>')
         if rnd.random() < 0.6:  # tầng bậc Art Deco
-            out.append(f'<rect x="{x + w * 0.2:.0f}" y="{base - h - 9}" width="{w * 0.6:.0f}" height="10" fill="#21094A"/>')
-            out.append(f'<rect x="{x + w * 0.46:.0f}" y="{base - h - 20}" width="3" height="12" fill="#21094A"/>')
+            out.append(f'<rect x="{x + w * 0.2:.0f}" y="{base - h - 9}" width="{w * 0.6:.0f}" height="10" fill="{fill}"/>')
+            out.append(f'<rect x="{x + w * 0.46:.0f}" y="{base - h - 20}" width="3" height="12" fill="{fill}"/>')
         for _ in range(rnd.randint(1, 3)):
             wx, wy = x + rnd.randint(4, max(5, w - 8)), base - rnd.randint(8, max(9, h - 6))
             col = rnd.choice([PINK, GOLD, CYAN])
             d = rnd.uniform(2.5, 6)
-            wins.append(f'<rect x="{wx}" y="{wy}" width="4" height="5" fill="{col}"><animate attributeName="opacity" values="1;.15;1" dur="{d:.1f}s" begin="{rnd.uniform(0, 4):.1f}s" repeatCount="indefinite"/></rect>')
+            wl.append(f'<rect x="{wx}" y="{wy}" width="4" height="5" fill="{col}"><animate attributeName="opacity" values="1;.15;1" dur="{d:.1f}s" begin="{rnd.uniform(0, 4):.1f}s" repeatCount="indefinite"/></rect>')
         x += w + rnd.randint(2, 8)
-    return "".join(out + wins)
+    return "".join(out + (wl if wins else []))
 
 
 TAGLINES = ["C++  •  RUST  •  PYTHON", "GAMES  •  TOOLS  •  LINUX RICE", "COMMITS NEVER SLEEP"]
 
+DEFS_COMMON = """
+ <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+ <filter id="bloom" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+ <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="4"/>
+  <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 .95  0 0 0 0 .9  0 0 0 .9 -.25"/></filter>
+ <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
+"""
+
+
+def clouds(W, top, bot, seed):
+    rnd, out = random.Random(seed), []
+    for _ in range(9):
+        y, w, h = rnd.randint(top, bot), rnd.randint(200, 560), rnd.randint(5, 13)
+        x = rnd.randint(-100, W - 100)
+        dx = rnd.choice([-1, 1]) * rnd.randint(30, 80)
+        out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{h / 2}" fill="{rnd.choice(["#FF7AA8", "#FFB07A", "#B58CFF"])}" '
+                   f'opacity="{rnd.uniform(.14, .32):.2f}"><animate attributeName="x" values="{x};{x + dx};{x}" dur="{rnd.randint(30, 60)}s" repeatCount="indefinite"/></rect>')
+    return f'<g filter="url(#soft)">{"".join(out)}</g>'
+
+
+def birds(y, dur, begin):
+    flap_a, flap_b = "M-9,2 Q-4.5,-4 0,0 Q4.5,-4 9,2", "M-9,-3 Q-4.5,-9 0,0 Q4.5,-9 9,-3"
+    one = lambda dx, dy, i: (f'<path transform="translate({dx} {dy})" d="{flap_a}" fill="none" stroke="{INK}" stroke-width="1.6" stroke-linecap="round">'
+                             f'<animate attributeName="d" values="{flap_a};{flap_b};{flap_a}" dur="{0.7 + i * 0.05:.2f}s" repeatCount="indefinite"/></path>')
+    fm = [(0, 0), (-16, 7), (16, 7), (-32, 14), (32, 14), (-48, 21), (48, 21)]
+    return (f'<g><animateTransform attributeName="transform" type="translate" values="-120 {y};1320 {y}" dur="{dur}s" begin="{begin}s" repeatCount="indefinite"/>'
+            + "".join(one(dx, dy, i) for i, (dx, dy) in enumerate(fm)) + "</g>")
+
+
+def car(y, dur, begin):
+    return f"""<g><animateTransform attributeName="transform" type="translate" values="-160 {y};1360 {y}" dur="{dur}s" begin="{begin}s" repeatCount="indefinite"/>
+<path d="M52,-16 L330,-30 L330,2 L52,-2Z" fill="url(#beam)" opacity=".5"/>
+<path d="M-46,-8 L-42,-17 L-22,-21 L-8,-33 L22,-33 L36,-21 L50,-17 L53,-8 Z" fill="{INK}"/>
+<circle cx="-30" cy="-3" r="7.5" fill="{INK}"/><circle cx="30" cy="-3" r="7.5" fill="{INK}"/>
+<circle cx="-47" cy="-13" r="5" fill="{HOT}" filter="url(#bloom)"/><circle cx="-47" cy="-13" r="2" fill="#FFD0D8"/>
+<circle cx="52" cy="-13" r="3" fill="{GOLD}" filter="url(#bloom)"/></g>"""
+
+
+def lamp(x, base, h):
+    return (f'<rect x="{x - 1.5}" y="{base - h}" width="3" height="{h}" fill="{INK}"/><path d="M{x},{base - h} q0,-10 14,-10" stroke="{INK}" stroke-width="3" fill="none"/>'
+            f'<circle cx="{x + 14}" cy="{base - h - 7}" r="22" fill="url(#lampglow)"><animate attributeName="opacity" values=".85;1;.85" dur="3s" repeatCount="indefinite"/></circle>'
+            f'<circle cx="{x + 14}" cy="{base - h - 7}" r="3" fill="#FFF1C0"/>')
+
 
 def banner():
-    W, H, HOR = 1200, 440, 300
+    W, H, HOR = 1200, 440, 296
     rnd = random.Random(7)
     stars = "".join(
-        f'<circle cx="{rnd.randint(10, 1190)}" cy="{rnd.randint(8, 170)}" r="{rnd.choice([0.8, 1.1, 1.6])}" fill="#fff">'
-        f'<animate attributeName="opacity" values=".15;1;.15" dur="{rnd.uniform(2, 5):.1f}s" begin="{rnd.uniform(0, 4):.1f}s" repeatCount="indefinite"/></circle>'
-        for _ in range(60))
+        f'<circle cx="{rnd.randint(10, 1190)}" cy="{rnd.randint(8, 150)}" r="{rnd.choice([0.7, 1, 1.5])}" fill="#fff">'
+        f'<animate attributeName="opacity" values=".1;1;.1" dur="{rnd.uniform(2, 5):.1f}s" begin="{rnd.uniform(0, 4):.1f}s" repeatCount="indefinite"/></circle>'
+        for _ in range(55))
     stripes = "".join(f'<rect x="440" y="{HOR - 100 + i * 17 + i * i:.0f}" width="320" height="{2 + i * 1.5:.1f}" fill="#000"/>' for i in range(1, 6))
     refl = "".join(
         f'<rect x="{600 - w / 2}" y="{HOR + 14 + i * 13}" width="{w}" height="4" rx="2" fill="{ORANGE}" opacity="{0.75 - i * 0.1:.2f}">'
         f'<animate attributeName="width" values="{w};{w * 0.7:.0f};{w}" dur="{3 + i * 0.6:.1f}s" repeatCount="indefinite"/>'
         f'<animate attributeName="x" values="{600 - w / 2};{600 - w * 0.35:.0f};{600 - w / 2}" dur="{3 + i * 0.6:.1f}s" repeatCount="indefinite"/></rect>'
         for i, w in enumerate([300, 250, 200, 150, 100, 60]))
-    waves = "".join(
-        f'<rect x="{x}" y="{y}" width="{w}" height="2" rx="1" fill="{PINK}" opacity=".25"><animate attributeName="x" values="{x};{x + 40};{x}" dur="{5 + i % 3}s" repeatCount="indefinite"/></rect>'
-        for i, (x, y, w) in enumerate([(300, 352, 160), (860, 340, 140), (980, 372, 100), (200, 395, 200), (800, 410, 220), (520, 420, 140)]))
-
-    tag = []  # tagline gõ chữ, 3 câu lặp vòng 15s
+    tag = []
     for i, text in enumerate(TAGLINES):
         w = BOLD.width(text, 26, 7)
         x0 = 600 - w / 2
@@ -182,44 +221,61 @@ def banner():
         kt = f"0;{a:.4f};{a + (b - a) * 0.4:.4f};{b - (b - a) * 0.12:.4f};{b - (b - a) * 0.04:.4f};1"
         wv = f"0;0;{n(w + 6)};{n(w + 6)};0;0"
         xv = f"{n(x0)};{n(x0)};{n(x0 + w + 6)};{n(x0 + w + 6)};{n(x0)};{n(x0)}"
-        tag.append(f'<clipPath id="tg{i}"><rect x="{n(x0 - 3)}" y="318" height="40" width="0"><animate attributeName="width" values="{wv}" keyTimes="{kt}" dur="15s" repeatCount="indefinite"/></rect></clipPath>'
-                   f'<g clip-path="url(#tg{i})">{T(BOLD, text, 26, x0, 348, CREAM, track=7)}</g>'
-                   f'<rect x="{n(x0)}" y="326" width="3" height="28" fill="{GOLD}"><animate attributeName="x" values="{xv}" keyTimes="{kt}" dur="15s" repeatCount="indefinite"/>'
-                   f'<animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/></rect>')
+        tag.append(f'<clipPath id="tg{i}"><rect x="{n(x0 - 3)}" y="316" height="40" width="0"><animate attributeName="width" values="{wv}" keyTimes="{kt}" dur="15s" repeatCount="indefinite"/></rect></clipPath>'
+                   f'<g clip-path="url(#tg{i})">{T(BOLD, text, 26, x0, 346, CREAM, track=7)}</g>'
+                   f'<g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;{a:.4f};{a + 0.001:.4f};{b - (b - a) * 0.04:.4f};{b - (b - a) * 0.039:.4f};1" dur="15s" repeatCount="indefinite"/>'
+                   f'<rect x="{n(x0)}" y="324" width="3" height="28" fill="{GOLD}"><animate attributeName="x" values="{xv}" keyTimes="{kt}" dur="15s" repeatCount="indefinite"/>'
+                   f'<animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/></rect></g>')
 
-    logo = ANTON.path("LUCHUB-19", 150, 600, 252, "middle", track=6)
+    logo = ANTON.path("LUCHUB-19", 150, 600, 250, "middle", track=6)
+
+    def glitch(color, dx):
+        return (f'<path d="{logo}" fill="{color}" opacity=".85"><animateTransform attributeName="transform" type="translate" '
+                f'values="{dx} 0;{dx} 0;{dx * 3} 2;{-dx * 2} -2;{dx} 0;{dx} 0" keyTimes="0;.88;.90;.93;.95;1" dur="6s" repeatCount="indefinite"/></path>')
+
     body = f"""
-<defs>
+<defs>{DEFS_COMMON}
  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0" stop-color="#0E0430"/><stop offset=".3" stop-color="{VIOLET}"/><stop offset=".6" stop-color="#C93A92"/>
+  <stop offset="0" stop-color="#0A0328"/><stop offset=".28" stop-color="{VIOLET}"/><stop offset=".58" stop-color="#C93A92"/>
   <stop offset=".82" stop-color="#FF6F61"/><stop offset="1" stop-color="#FFB04A"/></linearGradient>
  <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A1580"/><stop offset="1" stop-color="{INK}"/></linearGradient>
  <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{GOLD}"/><stop offset=".55" stop-color="{ORANGE}"/><stop offset="1" stop-color="{PINK}"/></linearGradient>
  <linearGradient id="logo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4E6"/><stop offset=".35" stop-color="#FFB3C7"/><stop offset=".7" stop-color="{PINK}"/><stop offset="1" stop-color="{ORANGE}"/></linearGradient>
+ <linearGradient id="flare" x1="0" x2="1"><stop offset="0" stop-color="{GOLD}" stop-opacity="0"/><stop offset=".5" stop-color="#FFF1C0" stop-opacity=".95"/><stop offset="1" stop-color="{GOLD}" stop-opacity="0"/></linearGradient>
+ <linearGradient id="beam" x1="0" x2="1"><stop offset="0" stop-color="{GOLD}" stop-opacity=".8"/><stop offset="1" stop-color="{GOLD}" stop-opacity="0"/></linearGradient>
  <radialGradient id="halo"><stop offset="0" stop-color="{ORANGE}" stop-opacity=".55"/><stop offset="1" stop-color="{ORANGE}" stop-opacity="0"/></radialGradient>
+ <radialGradient id="lampglow"><stop offset="0" stop-color="#FFE9A8" stop-opacity=".8"/><stop offset="1" stop-color="#FFE9A8" stop-opacity="0"/></radialGradient>
  <mask id="sunmask"><rect width="{W}" height="{H}" fill="#fff"/>{stripes}</mask>
  <clipPath id="above"><rect width="{W}" height="{HOR}"/></clipPath>
  <filter id="glow" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="9"/></filter>
 </defs>
 <rect width="{W}" height="{HOR}" fill="url(#sky)"/>
-{stars}
-<circle cx="600" cy="{HOR}" r="330" fill="url(#halo)" clip-path="url(#above)"><animate attributeName="opacity" values=".8;1;.8" dur="6s" repeatCount="indefinite"/></circle>
-<g clip-path="url(#above)"><circle cx="600" cy="{HOR - 12}" r="112" fill="url(#sun)" mask="url(#sunmask)">
- <animate attributeName="cy" values="{HOR - 12};{HOR - 4};{HOR - 12}" dur="8s" repeatCount="indefinite"/></circle></g>
-{skyline(20, 380, HOR, 3, 80)}{skyline(830, 1190, HOR, 11, 95)}
+{stars}{clouds(W, 40, HOR - 60, 5)}
+<circle cx="600" cy="{HOR}" r="340" fill="url(#halo)" clip-path="url(#above)"><animate attributeName="opacity" values=".8;1;.8" dur="6s" repeatCount="indefinite"/></circle>
+<g clip-path="url(#above)"><circle cx="600" cy="{HOR - 12}" r="112" fill="url(#sun)" mask="url(#sunmask)"><animate attributeName="cy" values="{HOR - 12};{HOR - 4};{HOR - 12}" dur="8s" repeatCount="indefinite"/></circle></g>
+<g opacity=".55">{skyline(0, 1200, HOR, 21, 120, fill="#8A3AA0", wins=False)}</g>
+{skyline(10, 390, HOR, 3, 85)}{skyline(800, 1190, HOR, 11, 95)}
 <rect y="{HOR}" width="{W}" height="{H - HOR}" fill="url(#sea)"/>
-{refl}{waves}
-<path d="M0,{H} L0,372 Q70,352 150,372 T260,{H}Z" fill="{INK}"/>
-<path d="M{W},{H} L{W},366 Q1130,348 1050,368 T940,{H}Z" fill="{INK}"/>
-{palm(92, H, 36, 168, 1.0, False, 0)}{palm(168, H, 48, 214, 0.78, False, -2)}
-{palm(1108, H, 36, 172, 1.0, True, -1)}{palm(1030, H, 48, 218, 0.78, True, -3)}
+{refl}
+<rect x="150" y="{HOR - 7}" width="900" height="3" fill="url(#flare)"><animate attributeName="opacity" values=".35;.9;.35" dur="5s" repeatCount="indefinite"/></rect>
+{birds(54, 42, 0)}{birds(96, 58, -20)}
 {T(SEMI, "WELCOME TO THE PROFILE OF", 18, 600, 92, CREAM, "middle", 9, 'opacity=".92"')}
 <path d="{logo}" fill="{PINK}" filter="url(#glow)" opacity=".75"/>
+{glitch(CYAN, -3)}{glitch(HOT, 3)}
 <path d="{logo}" fill="url(#logo)" stroke="{DEEP}" stroke-width="3" paint-order="stroke"/>
-<rect x="470" y="298" width="260" height="2" fill="{CREAM}" opacity=".5"/>
+<rect x="470" y="296" width="260" height="2" fill="{CREAM}" opacity=".45"/>
 {"".join(tag)}
+<rect y="404" width="{W}" height="{H - 404}" fill="#07021A"/>
+<rect y="404" width="{W}" height="2" fill="{PINK}" opacity=".8"/>
+<g stroke="{CREAM}" stroke-opacity=".55" stroke-width="3" stroke-dasharray="26 22"><line x1="-48" y1="424" x2="1248" y2="424"><animate attributeName="x1" values="0;-48" dur=".5s" repeatCount="indefinite"/></line></g>
+{lamp(330, 404, 120)}{lamp(870, 404, 120)}
+{car(410, 16, 1)}
+{palm(78, H, 66, 160, 1.4, False, 0)}{palm(170, H, 52, 226, 0.8, False, -2)}
+{palm(1128, H, 70, 168, 1.4, True, -1)}{palm(1036, H, 52, 230, 0.8, True, -3)}
+<rect width="{W}" height="{H}" fill="url(#vig)"/>
+<rect width="{W}" height="{H}" filter="url(#grain)" opacity=".13"/>
 """
-    write("banner.svg", svg(W, H, body, "luchub-19 profile banner, Vice City sunset", "Animated sunset banner with palm trees and a typing tagline"))
+    write("banner.svg", svg(W, H, body, "luchub-19 profile banner, Vice City sunset", "Layered animated sunset scene with palm trees, a passing car, birds and a typing tagline"))
 
 
 # =============================================================================
@@ -297,66 +353,88 @@ def phone():
 # =============================================================================
 # 4. HUD / CHỈ SỐ
 # =============================================================================
+THRESHOLDS = [1, 10, 30, 60, 100, 200]
+
+
 def stars_for(c):
-    for i, t in enumerate([200, 100, 60, 30, 10, 1]):
-        if c >= t:
-            return 6 - i
-    return 0
+    return sum(1 for t in THRESHOLDS if c >= t)
+
+
+ICON_HEART = "M0,5 C-9,-2 -6,-9 0,-4 C6,-9 9,-2 0,5Z"
+ICON_BOLT = "M2,-8 L-5,1 L-1,1 L-3,8 L5,-2 L1,-2Z"
+
+
+def status_bar(x, y, w, pct, col1, col2, icon, label, val, gid):
+    ic = icon if icon in (ICON_HEART, ICON_BOLT) else ""
+    eye = (f'<ellipse cx="0" cy="0" rx="9" ry="5.5" fill="none" stroke="{CREAM}" stroke-width="2"/><circle cx="0" cy="0" r="2.6" fill="{CREAM}"/>' if not ic else
+           f'<path d="{ic}" fill="{CREAM}"/>')
+    return f"""<defs><linearGradient id="{gid}" x1="0" x2="1"><stop offset="0" stop-color="{col1}"/><stop offset="1" stop-color="{col2}"/></linearGradient></defs>
+<g transform="translate({x} {y})">
+<circle cx="14" cy="9" r="14" fill="{INK}" fill-opacity=".7" stroke="{col1}" stroke-width="2"/><g transform="translate(14 9)">{eye}</g>
+<g transform="skewX(-20) translate({n(9 * SKEW20)} 0)"><rect x="40" y="0" width="{w}" height="18" fill="{INK}" fill-opacity=".72" stroke="{CREAM}" stroke-opacity=".3"/>
+<rect x="43" y="3" width="0" height="12" fill="url(#{gid})"><animate attributeName="width" values="0;{n((w - 6) * pct / 100)}" dur="1.4s" fill="freeze" calcMode="spline" keySplines=".2 .8 .2 1" keyTimes="0;1"/></rect></g>
+{T(BOLD, label, 11, 52, -5, CREAM, track=2, extra='opacity=".85"')}{T(BOLD, val, 11, w + 36, -5, CREAM, "end", 1, 'opacity=".85"')}</g>"""
 
 
 def hud(st):
-    W, H = 830, 280
+    W, H, HOR = 830, 340, 214
     s = stars_for(st["commits30"])
     health = round(st["active_days30"] / 30 * 100)
-    armor = min(100, round(st["year_contributions"] / 1000 * 100))
-
-    def bar(y, label, pct, grad, val):
-        return f"""{T(ANTON, label, 18, 240, y - 8, CREAM, track=3)}{T(BOLD, val, 15, 560, y - 8, CREAM, "end", 1)}
-<g transform="skewX(-20) translate({n(y * SKEW20)} 0)"><rect x="240" y="{y}" width="320" height="18" fill="{INK}" stroke="{CREAM}" stroke-opacity=".35"/>
-<rect x="244" y="{y + 4}" width="0" height="10" fill="url(#{grad})"><animate attributeName="width" values="0;{n(312 * pct / 100)}" dur="1.4s" fill="freeze" calcMode="spline" keySplines=".2 .8 .2 1" keyTimes="0;1"/></rect></g>"""
+    energy = min(100, round(st["year_contributions"] / 1000 * 100))
+    focus = round(100 * st["repos_touched30"] / max(1, st["public_repos"]))
+    cash = f"${st['year_contributions'] * 10:,}"
+    earned = f"+${st['commits30'] * 10:,}"
+    nxt = next((t for t in THRESHOLDS if st["commits30"] < t), None)
+    objective = (f"Land {nxt - st['commits30']} more commits to earn star {s + 1}." if nxt else "Maximum heat. Keep your head down.")
 
     starsvg = ""
     for i in range(6):
         on = i < s
         anim = (f'<animate attributeName="fill" values="{CREAM};{PINK};{CYAN};{CREAM}" dur="1.6s" begin="{i * 0.12:.2f}s" repeatCount="indefinite"/>' if on else "")
-        starsvg += (f'<path d="{star_path(620 + i * 33, 146, 15)}" fill="{CREAM if on else "none"}" stroke="{CREAM}" stroke-width="2" '
-                    f'stroke-opacity="{1 if on else .35}">{anim}</path>')
-    blips = "".join(f'<circle cx="{110 + dx}" cy="{150 + dy}" r="3.5" fill="{c}"><animate attributeName="opacity" values="1;.1;1" dur="{d}s" repeatCount="indefinite"/></circle>'
-                    for dx, dy, c, d in [(28, -30, PINK, 3), (-34, 18, GOLD, 4), (10, 40, CYAN, 3.5), (-14, -44, ORANGE, 5)])
-    cash = f"${st['year_contributions'] * 10:,}"
-    legend = f"Auto-updated {st['updated']}  •  health = active days  •  armor = contributions / 1000  •  stars = commits (30d)  •  cash = contributions x $10"
+        starsvg += (f'<path d="{star_path(620 + i * 33, 92, 14)}" fill="{CREAM if on else "none"}" stroke="{CREAM}" stroke-width="2" '
+                    f'stroke-opacity="{1 if on else .4}">{anim}</path>')
+    blips = "".join(f'<circle cx="{92 + dx}" cy="{256 + dy}" r="3.2" fill="{c}"><animate attributeName="opacity" values="1;.1;1" dur="{d}s" repeatCount="indefinite"/></circle>'
+                    for dx, dy, c, d in [(24, -26, PINK, 3), (-30, 14, GOLD, 4), (8, 34, CYAN, 3.5), (-12, -38, ORANGE, 5)])
+    lanes = "".join(f'<line x1="415" y1="{HOR}" x2="{x}" y2="{H}" stroke="{CREAM}" stroke-opacity=".10"/>' for x in range(-300, 1200, 150))
+    ow = SEMI.width(objective, 17, 1) + 36
     body = f"""
-<defs>
- <linearGradient id="hp" x1="0" x2="1"><stop offset="0" stop-color="{HOT}"/><stop offset="1" stop-color="{ORANGE}"/></linearGradient>
- <linearGradient id="ar" x1="0" x2="1"><stop offset="0" stop-color="{CYAN}"/><stop offset="1" stop-color="#7BA7FF"/></linearGradient>
+<defs>{DEFS_COMMON}
+ <linearGradient id="hsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A0328"/><stop offset=".5" stop-color="#6A2399"/><stop offset=".85" stop-color="#E8507A"/><stop offset="1" stop-color="#FF9A5A"/></linearGradient>
+ <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1260"/><stop offset="1" stop-color="#07021A"/></linearGradient>
  <linearGradient id="sweep" x1="0" x2="1"><stop offset="0" stop-color="{CYAN}" stop-opacity="0"/><stop offset="1" stop-color="{CYAN}" stop-opacity=".55"/></linearGradient>
- <clipPath id="rd"><circle cx="110" cy="150" r="84"/></clipPath>
+ <clipPath id="rd"><circle cx="92" cy="256" r="60"/></clipPath>
+ <clipPath id="frame"><rect width="{W}" height="{H}" rx="14"/></clipPath>
 </defs>
-{panel(W, H)}
-<circle cx="110" cy="136" r="90" fill="{INK}" stroke="{CREAM}" stroke-width="3"/>
-<g clip-path="url(#rd2)">
+<g clip-path="url(#frame)">
+<rect width="{W}" height="{HOR}" fill="url(#hsky)"/>{clouds(W, 30, HOR - 50, 9)}
+<g opacity=".6">{skyline(0, 830, HOR, 31, 90, fill="#7A2F9E", wins=False)}</g>
+{skyline(0, 830, HOR, 5, 60)}
+<rect y="{HOR}" width="{W}" height="{H - HOR}" fill="url(#road)"/>{lanes}
+<g stroke="{GOLD}" stroke-width="3" stroke-dasharray="14 18" opacity=".7"><line x1="415" y1="{HOR}" x2="415" y2="{H}"><animate attributeName="stroke-dashoffset" values="0;-32" dur=".6s" repeatCount="indefinite"/></line></g>
+{palm(790, H + 20, 40, 120, 1.0, True, -1)}
+<rect width="{W}" height="{H}" fill="url(#vig)"/>
+<rect width="{W}" height="{H}" filter="url(#grain)" opacity=".12"/>
 </g>
-<clipPath id="rd2"><circle cx="110" cy="136" r="84"/></clipPath>
-<g clip-path="url(#rd2)">
- <circle cx="110" cy="136" r="84" fill="#2A0F5E"/>
- <circle cx="110" cy="136" r="56" fill="none" stroke="{CREAM}" stroke-opacity=".2"/><circle cx="110" cy="136" r="28" fill="none" stroke="{CREAM}" stroke-opacity=".2"/>
- <path d="M26,136H194M110,52V220" stroke="{CREAM}" stroke-opacity=".2"/>
- <path d="M110,136 L110,52 A84,84 0 0 1 150,62Z" fill="url(#sweep)"><animateTransform attributeName="transform" type="rotate" values="0 110 136;360 110 136" dur="4s" repeatCount="indefinite"/></path>
- <g transform="translate(0 -14)">{blips}</g>
-</g>
-<path d="M110,124 l8,18 l-8,-4 l-8,4Z" fill="{GOLD}"/>
-{T(SEMI, "LEONIDA", 12, 110, 252, CREAM, "middle", 4, DIM)}
-{bar(86, "HEALTH", health, "hp", f"{st['active_days30']}/30 days active")}
-{bar(140, "ARMOR", armor, "ar", f"{st['year_contributions']:,} contributions / year")}
-{T(ANTON, "CASH", 18, 240, 203, CREAM, track=3)}
-{T(ANTON, cash, 46, 240, 246, GOLD, track=2)}
-{T(SEMI, "WANTED", 18, 718, 100, CREAM, "middle", 6)}
+<rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="13" fill="none" stroke="{CREAM}" stroke-opacity=".18"/>
+{status_bar(22, 36, 190, health, HOT, PINK, ICON_HEART, "HEALTH", f"{st['active_days30']}/30 DAYS", "g1")}
+{status_bar(22, 76, 190, energy, CYAN, "#7BA7FF", ICON_BOLT, "ENERGY", f"{st['year_contributions']:,} / YEAR", "g2")}
+{status_bar(22, 116, 190, focus, "#B58CFF", PURPLE, "eye", "FOCUS", f"{st['repos_touched30']}/{st['public_repos']} REPOS", "g3")}
+{T(ANTON, cash, 40, 808, 52, CREAM, "end", 2, 'stroke="#0B0320" stroke-width="3" paint-order="stroke"')}
+{T(ANTON, earned, 22, 808, 78, CYAN, "end", 2, 'stroke="#0B0320" stroke-width="2.5" paint-order="stroke"')}
 {starsvg}
-{T(BOLD, f"{st['commits30']} commits in 30 days", 16, 718, 192, CREAM, "middle", 1)}
-{T(REG, f"{s} of 6 stars", 13, 718, 214, CREAM, "middle", 1, DIM)}
-{T(REG, legend, 10.5, 415, 270, CREAM, "middle", 0, 'opacity=".4"')}
+{T(BOLD, f"{st['commits30']} COMMITS / 30 DAYS", 12, 808, 130, CREAM, "end", 2, 'opacity=".85"')}
+<circle cx="92" cy="256" r="64" fill="{INK}" stroke="{CREAM}" stroke-width="3"/>
+<g clip-path="url(#rd)"><circle cx="92" cy="256" r="60" fill="#2A0F5E"/>
+ <circle cx="92" cy="256" r="40" fill="none" stroke="{CREAM}" stroke-opacity=".2"/><circle cx="92" cy="256" r="20" fill="none" stroke="{CREAM}" stroke-opacity=".2"/>
+ <path d="M32,256H152M92,196V316" stroke="{CREAM}" stroke-opacity=".2"/>
+ <path d="M92,256 L92,196 A60,60 0 0 1 120,203Z" fill="url(#sweep)"><animateTransform attributeName="transform" type="rotate" values="0 92 256;360 92 256" dur="4s" repeatCount="indefinite"/></path>{blips}</g>
+<path d="M92,246 l7,15 l-7,-4 l-7,4Z" fill="{GOLD}"/>{T(BOLD, "N", 11, 92, 190, CREAM, "middle")}
+<rect x="{n(415 - ow / 2 + 60)}" y="296" width="{n(ow)}" height="30" rx="4" fill="{INK}" fill-opacity=".72"/>
+<rect x="{n(415 - ow / 2 + 60)}" y="296" width="4" height="30" fill="{GOLD}"/>
+{T(SEMI, objective, 17, 415 + 60, 317, CREAM, "middle", 1)}
+{T(REG, f"Auto-updated {st['updated']} • health = active days • energy = contributions / 1000 • focus = repos touched • cash = contributions x $10 • stars = commits (30d)", 9.5, 415, 334, CREAM, "middle", 0, 'opacity=".45"')}
 """
-    write("hud.svg", svg(W, H, body, f"Player stats: {s} wanted stars, {st['commits30']} commits in 30 days"))
+    write("hud.svg", svg(W, H, body, f"Player HUD: {s} wanted stars, {st['commits30']} commits in 30 days"))
 
 
 # =============================================================================

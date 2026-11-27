@@ -94,12 +94,19 @@ Lưu ý khi chạy Actions: số liệu Actions (GITHUB_TOKEN) có thể lệch 
 sau mỗi lần push, Actions sẽ ghi đè `assets/hud.svg` — luôn `git pull --rebase` trước khi push.
 Workflow có `concurrency` để hai lượt chạy không tranh nhánh `output`/`main`.
 
-## 6. Hiện trạng v1 (đã đẩy lên) và điểm yếu cụ thể
+## 6. Hiện trạng và điểm yếu cụ thể
+**v2 một phần (2026-11-27):** `banner.svg` và `hud.svg` đã dựng lại nhiều lớp (trời/mây/mặt trời/skyline xa mờ → biển → logo có quang sai màu →
+đường, đèn đường có quầng sáng, xe chạy, đàn chim → cọ tiền cảnh che một phần chữ → vignette + hạt phim). HUD đặt trên cảnh phố, bố cục theo mục 4
+(thanh hồng/cyan/tím kèm biểu tượng, tiền xếp chồng, sao truy nã, minimap, dòng mục tiêu tính từ số commit còn thiếu).
+**Vẫn còn kiểu v1 (template, cần làm lại):** `phone.svg`, `mission-*.svg`, `inventory.svg`, `radio.svg`, 5 tiêu đề mục `h-*.svg`.
+Đã thử và bỏ: biển neon "LUCHUB" trên mái nhà (bị chữ logo và cọ che hết, không đọc được).
+Bảng màu tự chọn (chưa phải màu chính thức của game): PINK #FF3E8A, HOT #FF5C7A, ORANGE #FF9A3C, GOLD #FFD35A, PURPLE #7B3FE4, CYAN #35E6D8, nền #140729 / #0B0320.
+Điểm yếu cần sửa (xếp theo tác động):
 Bảng màu tự chọn: PINK #FF3E8A, HOT #FF5C7A, ORANGE #FF9A3C, GOLD #FFD35A, PURPLE #7B3FE4, CYAN #35E6D8, nền #140729 / #0B0320.
 Các SVG: banner (1200×440), 5 tiêu đề mục, phone, hud, mission-1, mission-2 (CLASSIFIED), inventory, radio.
 Điểm yếu cần sửa (xếp theo tác động):
 1. Thiếu nội dung thật của chủ repo (xem mục 7 — phải HỎI, không được bịa).
-2. Bố cục đơn điệu → cần phá nhịp: các khối khác kích thước, chồng lấp, không phải hộp nào cũng viền hồng.
+2. Các mục dưới banner/HUD vẫn là hộp giống nhau → cần phá nhịp: các khối khác kích thước, chồng lấp, không phải hộp nào cũng viền hồng.
 3. Thiếu chiều sâu: tách lớp BG/FG (logo nằm *giữa* các lớp, cọ/tiền cảnh che một phần chữ), khí quyển (xa mờ, gần đậm), hạt phim, flare, quang sai màu.
 4. HUD chưa giống game: bám theo mục 4 (thanh hồng/cyan/tím kèm biểu tượng, tiền xếp chồng, nhãn ngắn viết hoa, thẻ tin nhắn nổi).
 5. Chưa có ảnh chụp/clip thật của dự án (Space Invaders chạy thật…).
