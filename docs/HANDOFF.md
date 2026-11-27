@@ -110,11 +110,11 @@ và `poster-classified.svg` (hồ sơ mật: thanh đen che chữ, ổ khóa, co
 Ảnh chụp game nằm ở `tools/shots/*.jpg` (nhúng base64 vào SVG vì SVG qua `<img>` không tải được file ngoài). Cách chụp lại (không đụng desktop):
 `HOME=<thư mục tạm> xvfb-run -a -s "-screen 0 1280x720x24" space_invaders --scene=combat|boss|menu --capture=out.png --capture-frame=240 --lang=en --quality=high`
 (game build từ repo vibeKing với raylib 5.5 build bằng CMake trong thư mục tạm). Đây là cảnh trình diễn dựng sẵn của game, không phải ván chơi thật — README đã ghi chú.
-**Chữ chưa được chủ repo duyệt (Claude tự viết):** hook hồ sơ "Wants clean code. The bugs have other plans.", câu thoại "Works on my machine." / "One more commit.", thẻ tin nhắn "Find me on GitHub. Messages answered at the speed of a compile.", "SELECT YOUR WEAPON", cùng các chữ bên dưới.
+**Chữ ĐÃ được chủ repo duyệt nguyên văn (2026-11-27):** toàn bộ hook, thoại, bio, thẻ tin nhắn hồ sơ; chữ vibeKing, Classified, banner (3 tagline), loadout. Đừng đổi nếu không được yêu cầu. (Danh sách bên dưới là các câu đó:) hook hồ sơ "Wants clean code. The bugs have other plans.", câu thoại "Works on my machine." / "One more commit.", thẻ tin nhắn "Find me on GitHub. Messages answered at the speed of a compile.", "SELECT YOUR WEAPON", cùng các chữ bên dưới.
 Chữ trong áp phích (hook "Hold the last line" lấy từ menu game; bio và câu thoại "Kill the medic first." / "Insert coin." / "Some missions never make the credits." do Claude viết từ README và game) **chưa được chủ repo duyệt**.
 **Làm xong lần 2 (cùng ngày):** toàn bộ README đã theo kiểu áp phích/cảnh: `poster-profile.svg` (hồ sơ nhân vật: bóng người đội mũ trùm trong khung lục giác + thẻ tin nhắn nổi — thay mục Phone cũ),
 `loadout.svg` (4 tấm xiên, chữ lớn tràn khung — thay Inventory cũ), 4 dải tiêu đề chương `h-*.svg` (hàm `chapter()`: gradient riêng từng chương, skyline, tiêu đề lệch trái/phải xen kẽ).
-**Radio đã gỡ khỏi README** vì chưa có bài thật (không để placeholder công khai). `radio()` vẫn còn trong code, tự dựng lại khi `data/radio.json` có bài thật (tiêu đề không bắt đầu bằng "Your track") — nhớ thêm lại mục vào README.
+**Radio (chương 05) đã dựng lại** dạng áp phích `poster-radio.svg` (mặt đài FM có kim chạy + equalizer, hàm `dial_scene()`; danh sách bài đọc từ `data/radio.json`). Bài thật do chủ repo chọn: HUMBLE. (Kendrick Lamar), Wow. (Post Malone), Goodbyes (Post Malone). Tên đài "LUCHUB FM 19.11" đã duyệt. Muốn đổi bài: sửa `data/radio.json` rồi build.
 **Sửa nội dung không có căn cứ công khai:** bỏ "Rust" khỏi tagline/hồ sơ (chỉ suy ra từ repo riêng tư, chủ repo không chọn); chú thích Python đổi thành "Scripts and automation" (bản cũ "Bots, sockets" ám chỉ repo riêng tư).
 Bio hồ sơ chỉ dựa trên repo công khai: vibeKing (raylib), didau (Hangout Planner, TypeScript), sway-ultricing (SwayFX rice, shell tự viết), dsa-web1.0 (StudyOS).
 Đã thử và bỏ: biển neon "LUCHUB" trên mái nhà (bị chữ logo và cọ che hết, không đọc được).
@@ -141,7 +141,7 @@ Repo `rice` là riêng tư nên áp phích không có liên kết.
 - 3 điều thật về bạn mà người lạ không đoán ra (sở thích, thói quen code, sản phẩm tự hào nhất).
 - Câu thoại/slogan kiểu nhân vật của bạn (ví dụ "Another day in paradise, right?" phiên bản của bạn).
 - Ảnh/GIF thật của dự án công khai (vibeKing: chụp màn hình/GIF chơi game), ảnh desktop rice (nếu muốn khoe).
-- 3+ bài radio và tên đài (hiện là "LUCHUB FM 19.11", tên do Claude đặt, chưa được duyệt). Mục Radio đang gỡ khỏi README cho tới khi có bài.
+- (Đã xong) radio: tên đài và 3 bài đã có.
 - Bộ đếm lượt xem: có chấp nhận một dịch vụ ngoài không?
 - Màu/cỡ logo/tagline: hiện là "C++ • RUST • PYTHON", "GAMES • TOOLS • LINUX RICE", "COMMITS NEVER SLEEP" (Claude tự đặt).
 
@@ -150,7 +150,7 @@ Repo `rice` là riêng tư nên áp phích không có liên kết.
   Ảnh thật của laptop chưa có (chủ repo chưa chụp được). Không đưa chương này lên cho tới khi (a) có ảnh thật đã làm sạch và (b) chủ repo mô tả đúng rice là gì. Không suy đoán công sức từ PC hiện tại.
   Không link `sway-ultricing` như thể nó là toàn bộ rice.
 - Chủ repo kiểm tra trên GitHub thật (nền sáng/tối, di động, SMIL có chạy không) và duyệt các chữ ở mục 6.
-- Thêm radio khi có bài. Cân nhắc: bộ đếm lượt xem (dịch vụ ngoài), ảnh desktop rice thật (cần chủ repo cung cấp/đồng ý).
+- Cân nhắc: bộ đếm lượt xem (dịch vụ ngoài), ảnh desktop rice thật (cần chủ repo cung cấp/đồng ý).
 - Chỗ có thể sâu hơn: poster riêng cho `sway-ultricing` / `didau` nếu muốn thêm nhiệm vụ; ảnh chụp thật của chúng.
 - Lưu ý khi viết script patch: `sed s#SCR#...#` từng làm hỏng chữ `TYPESCRIPT` — dùng placeholder không trùng chữ trong nội dung.
 

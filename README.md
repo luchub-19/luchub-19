@@ -24,6 +24,10 @@
 
 <img src="assets/loadout.svg" alt="Loadout: C and C++, Python, TypeScript, Linux" width="100%">
 
+<img src="assets/h-radio.svg" alt="Chapter 05: Radio" width="100%">
+
+<img src="assets/poster-radio.svg" alt="Luchub FM 19.11 now playing: HUMBLE. by Kendrick Lamar, Wow. by Post Malone, Goodbyes by Post Malone" width="100%">
+
 <div align="center">
 
 <br>

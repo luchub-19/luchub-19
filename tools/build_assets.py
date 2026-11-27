@@ -442,9 +442,28 @@ def figure_scene(hx, hy, hr):
             f'<path d="M-40,-104 C-40,-150 40,-150 40,-104" fill="none" stroke="{ORANGE}" stroke-width="2.5" opacity=".9"/></g></g>')
 
 
-def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None, redacted=False, alt="", label="VIEW ON GITHUB", card=None):
+def dial_scene(hx, hy, hr):
+    """Hình cắt: mặt đài FM có kim chạy và thanh equalizer."""
+    cy = hy - 36
+    eq = "".join(
+        f'<rect x="{hx - 72 + i * 16}" y="{hy + 66 - h}" width="9" height="{h}" rx="2" fill="{ORANGE if i % 2 else PINK}">'
+        f'<animate attributeName="y" values="{hy + 66 - h};{hy + 66 - h * 0.25:.0f};{hy + 66 - h}" dur="{0.6 + i * 0.12:.2f}s" repeatCount="indefinite"/>'
+        f'<animate attributeName="height" values="{h};{h * 0.25:.0f};{h}" dur="{0.6 + i * 0.12:.2f}s" repeatCount="indefinite"/></rect>'
+        for i, h in enumerate([32, 20, 34, 26, 34, 18, 30, 24, 32]))
+    return (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath><g clip-path="url(#hexc)">'
+            f'<rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="url(#psky)"/>'
+            f'<rect x="{hx - hr}" y="{hy + 66}" width="{2 * hr}" height="{hr}" fill="{INK}"/>'
+            f'<circle cx="{hx}" cy="{cy}" r="68" fill="#14062F" stroke="{CREAM}" stroke-width="3"/>'
+            f'<circle cx="{hx}" cy="{cy}" r="56" fill="none" stroke="{PINK}" stroke-width="4" stroke-dasharray="2 8" opacity=".7"/>'
+            f'{T(ANTON, "LUCHUB FM", 17, hx, cy - 14, CREAM, "middle", 2)}{T(ANTON, "19.11", 34, hx, cy + 24, GOLD, "middle", 2)}'
+            f'<g><animateTransform attributeName="transform" type="rotate" values="-24 {hx} {cy};24 {hx} {cy};-24 {hx} {cy}" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>'
+            f'<rect x="{hx - 2}" y="{cy - 66}" width="4" height="24" rx="2" fill="{PINK}"/></g>'
+            f'{eq}</g>')
+
+
+def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None, redacted=False, alt="", label="VIEW ON GITHUB", card=None, tracks=None, height=420):
     """Áp phích kiểu Rockstar 'Only in Leonida': nền + hình cắt tiền cảnh + hook + tiểu sử + câu thoại."""
-    W, H = 830, 420
+    W, H = 830, height
     hx, hy, hr = 648, 196, 132
     # --- nền
     if bg:
@@ -465,6 +484,8 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
                  f'<image href="{b64img(src)}" x="{n(dx - sx * kk)}" y="{n(dy - sy * kk)}" width="{n(fw_ * kk)}" height="{n(fh_ * kk)}" preserveAspectRatio="none"/></g>')
     elif fg == "figure":
         fgimg = figure_scene(hx, hy, hr)
+    elif fg == "dial":
+        fgimg = dial_scene(hx, hy, hr)
     else:
         fgimg = (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath>'
                  f'<g clip-path="url(#hexc)"><rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="url(#psky)"/></g>{padlock(hx, hy - 24, 1.05)}')
@@ -480,12 +501,16 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
         rr = random.Random(5)
         bd = "".join(f'<rect x="36" y="{y - 14 + i * 24}" width="{rr.randint(250, 400)}" height="17" fill="#000" stroke="{CREAM}" stroke-opacity=".15"/>' for i in range(3))
         y += 72
+    elif tracks:
+        bd = "".join(T(ANTON, f"{i + 1:02d}", 24, 36, y + 6 + i * 50, PINK) + T(BOLD, t["title"], 21, 84, y + 2 + i * 50, CREAM, track=.5)
+                     + T(REG, t["artist"], 15, 84, y + 22 + i * 50, CREAM, extra='opacity=".65"') for i, t in enumerate(tracks))
+        y += 50 * len(tracks) + 8
     else:
         ls = wrap(bio, REG, 16, 410)
         bd = "".join(T(REG, ln, 16, 36, y + i * 23, CREAM, extra='opacity=".92"') for i, ln in enumerate(ls))
         y += 23 * len(ls) + 12
     qs = "".join(T(SEMI, f"“{q}”", 17, 52, y + 17 + i * 24, CREAM, track=.5) for i, q in enumerate(quotes))
-    qbar = f'<rect x="36" y="{y}" width="3" height="{24 * len(quotes) + 2}" fill="{PINK}"/>'
+    qbar = f'<rect x="36" y="{y}" width="3" height="{24 * len(quotes) + 2}" fill="{PINK}"/>' if quotes else ""
     cx, cy = 36, 384
     ch = ""
     for c in chips:
@@ -586,34 +611,6 @@ def loadout():
 
 
 # =============================================================================
-# 7. RADIO
-# =============================================================================
-def radio(tracks):
-    W, H = 830, 220
-    tl = ""
-    for i, t in enumerate(tracks[:3]):
-        tl += (T(ANTON, f"{i + 1:02d}", 22, 330, 96 + i * 48, PINK) + T(BOLD, t["title"], 19, 372, 92 + i * 48, CREAM)
-               + T(REG, t["artist"], 15, 372, 112 + i * 48, CREAM, extra=DIM))
-    eq = "".join(
-        f'<rect x="{680 + i * 14}" y="{188 - h}" width="8" height="{h}" rx="2" fill="{ORANGE if i % 2 else PINK}">'
-        f'<animate attributeName="y" values="{188 - h};{188 - h * 0.25:.0f};{188 - h}" dur="{0.6 + i * 0.13:.2f}s" repeatCount="indefinite"/>'
-        f'<animate attributeName="height" values="{h};{h * 0.25:.0f};{h}" dur="{0.6 + i * 0.13:.2f}s" repeatCount="indefinite"/></rect>'
-        for i, h in enumerate([40, 28, 46, 34, 44, 24, 38, 30, 42]))
-    body = f"""
-<defs><radialGradient id="dial"><stop offset="0" stop-color="#3A1A78"/><stop offset="1" stop-color="{INK}"/></radialGradient></defs>
-{panel(W, H)}
-<circle cx="150" cy="110" r="84" fill="url(#dial)" stroke="{CREAM}" stroke-opacity=".4" stroke-width="3"/>
-<circle cx="150" cy="110" r="70" fill="none" stroke="{PINK}" stroke-opacity=".5" stroke-dasharray="2 8" stroke-width="4"/>
-{T(ANTON, "LUCHUB FM", 24, 150, 100, CREAM, "middle", 2)}{T(ANTON, "19.11", 38, 150, 146, GOLD, "middle", 2)}
-<g><animateTransform attributeName="transform" type="rotate" values="-22 150 110;22 150 110;-22 150 110" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/><rect x="148" y="30" width="4" height="30" rx="2" fill="{PINK}"/></g>
-{T(SEMI, "NOW PLAYING", 14, 330, 50, CYAN, track=5)}
-{tl}
-{eq}
-"""
-    write("radio.svg", svg(W, H, body, "Radio Luchub FM 19.11 tracklist"))
-
-
-# =============================================================================
 if __name__ == "__main__":
     stats = json.loads((ROOT / "data" / "stats.json").read_text())
     tracks = json.loads((ROOT / "data" / "radio.json").read_text())["tracks"]
@@ -637,5 +634,6 @@ if __name__ == "__main__":
            ["Some missions never make the credits."], ["???", "???"], redacted=True,
            alt="Mission 02: classified, details redacted", label="ACCESS DENIED")
     loadout()
-    if not tracks[0]["title"].startswith("Your track"):   # radio chỉ dựng khi có bài thật
-        radio(tracks)
+    chapter("h-radio.svg", "05", "RADIO", "ON AIR", "violet", False, 31)
+    poster("poster-radio.svg", "ON AIR", ["LUCHUB FM"], "Now playing", "", [], [], fg="dial", label=None, tracks=tracks, height=350,
+           alt="Luchub FM 19.11 now playing: " + ", ".join(f"{t['title']} by {t['artist']}" for t in tracks))
