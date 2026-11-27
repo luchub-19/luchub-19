@@ -103,6 +103,7 @@ Trạng thái sao (rỗng / trắng / trắng nhấp nháy / đỏ) theo REFEREN
 
 ### 1.8 Khí quyển
 Màu lớp xa = trộn(màu gốc, `HAZE`, k) với k = **0.55** ở L0, **0.2** ở L1, **0** ở L2/L3. Lớp càng xa thì độ tương phản càng thấp và màu càng ngả về màu chân trời.
+**Ngoại lệ (T1.3, đã duyệt 27/11):** cọ ở L0 dùng k = **0.30**. Cọ xa là bóng ngược sáng trước chân trời cam; mờ 55% làm nó hồng phẳng và nổi hơn toà nhà. Màu lá L0 cũng lấy từ bảng tối nhất (`PALM_DARK` trộn `SH_DEEP`, `INK`). Các vật L0 khác (toà nhà, mây) giữ 0.55.
 
 ---
 
