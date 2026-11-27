@@ -31,6 +31,13 @@ File này là nguồn sự thật cho các session sau. Đọc xong là biết: 
 | Sao truy nã | Theo số commit 30 ngày (1/10/30/60/100/200 commit → 1..6 sao) |
 | Radio | Tĩnh, tự chọn bài (**chưa có bài nào, đang là chỗ trống**) |
 
+### Quyết định đợt 5 (sau phản hồi v1)
+- Bố cục các mục dưới banner/HUD: **áp phích nhân vật kiểu Rockstar `Only in Leonida`** (ảnh nền + hình cắt tiền cảnh + hook + tiểu sử ngôi thứ ba + câu thoại), dùng cho chủ repo và từng dự án.
+- Nội dung giới thiệu: **chỉ dùng dữ liệu repo công khai, đánh dấu chỗ cần chủ repo xác nhận** (không bịa thông tin cá nhân). Chủ repo sẽ duyệt.
+- Ảnh thật: **Claude tự chụp vibeKing đang chạy**. Đã build trong thư mục tạm của session (raylib 5.5 + CMake, không cài vào hệ thống);
+  cần `xvfb` + `xdotool` (apt, chủ repo chạy sudo) để chạy ở màn hình ảo, tránh đụng desktop thật. Sprite `atlas.png` của game là Kenney CC0 (khử màu), dùng làm hình cắt được.
+- Thẻ CLASSIFIED: **giữ nhưng làm đẹp hơn** (hồ sơ mật có chủ đích, không lộ tên dự án riêng tư).
+
 ## 3. Phản hồi của chủ repo về bản v1 (QUAN TRỌNG)
 > "nhìn nó bị AI và không có chiều sâu gì cả. chưa được đầu tư gì, như kiểu làm qua loa."
 
