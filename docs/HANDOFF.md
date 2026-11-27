@@ -146,6 +146,9 @@ Repo `rice` là riêng tư nên áp phích không có liên kết.
 - Màu/cỡ logo/tagline: hiện là "C++ • RUST • PYTHON", "GAMES • TOOLS • LINUX RICE", "COMMITS NEVER SLEEP" (Claude tự đặt).
 
 ## 8. Việc còn lại / hướng tiếp
+- **Chương Safehouse (rice chính) — CHỜ.** Chủ repo (2026-11-27): rice chính nằm ở laptop, gồm nhiều lớp; repo công khai `sway-ultricing` chỉ là MỘT PHẦN; chưa có repo chính thức đầy đủ.
+  Ảnh thật của laptop chưa có (chủ repo chưa chụp được). Không đưa chương này lên cho tới khi (a) có ảnh thật đã làm sạch và (b) chủ repo mô tả đúng rice là gì. Không suy đoán công sức từ PC hiện tại.
+  Không link `sway-ultricing` như thể nó là toàn bộ rice.
 - Chủ repo kiểm tra trên GitHub thật (nền sáng/tối, di động, SMIL có chạy không) và duyệt các chữ ở mục 6.
 - Thêm radio khi có bài. Cân nhắc: bộ đếm lượt xem (dịch vụ ngoài), ảnh desktop rice thật (cần chủ repo cung cấp/đồng ý).
 - Chỗ có thể sâu hơn: poster riêng cho `sway-ultricing` / `didau` nếu muốn thêm nhiệm vụ; ảnh chụp thật của chúng.
