@@ -410,6 +410,9 @@ def hud(st):
 import base64
 
 
+SHOT_DIMS = {"vibeking-combat.jpg": (800, 600), "vibeking-boss.jpg": (800, 600), "vibeking-menu.jpg": (800, 600), "rice-desktop.jpg": (1800, 1013), "rice-desktop-bg.jpg": (640, 360), "rice-desktop-fg.jpg": (330, 366)}
+
+
 def b64img(name):
     return "data:image/jpeg;base64," + base64.b64encode((ROOT / "tools" / "shots" / name).read_bytes()).decode()
 
@@ -445,8 +448,9 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
     hx, hy, hr = 648, 196, 132
     # --- nền
     if bg:
-        k = 1.04
-        bgimg = (f'<image href="{b64img(bg)}" x="-1" y="-96" width="{n(800 * k)}" height="{n(600 * k)}" preserveAspectRatio="none" filter="url(#blur)"/>')
+        bw_, bh_ = SHOT_DIMS[bg]
+        k = max(W / bw_, H / bh_)
+        bgimg = (f'<image href="{b64img(bg)}" x="{n((W - bw_ * k) / 2)}" y="{n((H - bh_ * k) / 2)}" width="{n(bw_ * k)}" height="{n(bh_ * k)}" preserveAspectRatio="none" filter="url(#blur)"/>')
     else:
         bgimg = (f'<rect width="{W}" height="{H}" fill="url(#psky)"/>{skyline(0, 830, 300, 77, 110, fill="#2A0F5E", wins=False)}'
                  f'<rect y="300" width="{W}" height="{H - 300}" fill="{INK}"/>')
@@ -454,10 +458,11 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
     if isinstance(fg, tuple):
         src, (sx, sy, sw, sh) = fg
         kk = (2 * hr * 0.9) / sw
+        fw_, fh_ = SHOT_DIMS[src]
         dx, dy = hx - sw * kk / 2, hy - sh * kk / 2
         fgimg = (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath>'
                  f'<g clip-path="url(#hexc)"><rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="#0B0320"/>'
-                 f'<image href="{b64img(src)}" x="{n(dx - sx * kk)}" y="{n(dy - sy * kk)}" width="{n(800 * kk)}" height="{n(600 * kk)}" preserveAspectRatio="none"/></g>')
+                 f'<image href="{b64img(src)}" x="{n(dx - sx * kk)}" y="{n(dy - sy * kk)}" width="{n(fw_ * kk)}" height="{n(fh_ * kk)}" preserveAspectRatio="none"/></g>')
     elif fg == "figure":
         fgimg = figure_scene(hx, hy, hr)
     else:
@@ -487,9 +492,11 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
         w = BOLD.width(c, 12, 1.5) + 24
         ch += f'<rect x="{n(cx)}" y="{cy}" width="{n(w)}" height="24" rx="12" fill="{INK}" fill-opacity=".6" stroke="{CYAN}" stroke-opacity=".85"/>{T(BOLD, c, 12, cx + w / 2, cy + 16, CYAN, "middle", 1.5)}'
         cx += w + 8
-    bw = BOLD.width(label, 13, 3) + 44
+    bw = BOLD.width(label or "", 13, 3) + 44
     btn = (f'<g><rect x="{n(794 - bw)}" y="{cy - 2}" width="{n(bw)}" height="28" fill="{PINK}" transform="skewX(0)"/>'
-           f'{T(BOLD, label, 13, 794 - bw / 2, cy + 17, INK, "middle", 3)}</g>')
+           f'{T(BOLD, label or "", 13, 794 - bw / 2, cy + 17, INK, "middle", 3)}</g>')
+    if not label:
+        btn = ""
     stamp = ""
     if redacted:
         stamp = (f'<g transform="rotate(-9 560 330)"><rect x="440" y="300" width="250" height="62" fill="none" stroke="{HOT}" stroke-width="5"/>'
@@ -630,5 +637,11 @@ if __name__ == "__main__":
            ["Some missions never make the credits."], ["???", "???"], redacted=True,
            alt="Mission 02: classified, details redacted", label="ACCESS DENIED")
     loadout()
+    chapter("h-safehouse.svg", "05", "SAFEHOUSE", "HOME BASE", "pink", False, 27)
+    poster("poster-safehouse.svg", "HOME BASE", ["SAFEHOUSE"], "Linux Mint, wearing someone else's clothes",
+           "Cinnamon on Linux Mint 22.3, rebuilt by hand to look like macOS Tahoe: a dark GTK theme, SF Pro, the Bibata cursor, a Plank dock and a terminal tuned until it feels native.",
+           ["It's not a Mac. It just looks like one.", "Everything is a config file."], ["LINUX MINT", "CINNAMON", "KITTY"],
+           bg="rice-desktop-bg.jpg", fg=("rice-desktop-fg.jpg", (0, 0, 330, 366)), label=None,
+           alt="Home base: a Linux Mint desktop themed to look like macOS Tahoe, with a transparent kitty terminal running fastfetch")
     if not tracks[0]["title"].startswith("Your track"):   # radio chỉ dựng khi có bài thật
         radio(tracks)

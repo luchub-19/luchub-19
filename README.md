@@ -24,6 +24,12 @@
 
 <img src="assets/loadout.svg" alt="Loadout: C and C++, Python, TypeScript, Linux" width="100%">
 
+<img src="assets/h-safehouse.svg" alt="Chapter 05: Safehouse" width="100%">
+
+<img src="assets/poster-safehouse.svg" alt="Safehouse: my Linux Mint desktop, themed to look like macOS Tahoe, with a transparent kitty terminal running fastfetch" width="100%">
+
+<sub>Real desktop: Linux Mint 22.3, Cinnamon, MacTahoe theme, kitty.</sub>
+
 <div align="center">
 
 <br>

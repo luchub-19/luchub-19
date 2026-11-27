@@ -131,6 +131,11 @@ Các SVG: banner (1200×440), 5 tiêu đề mục, phone, hud, mission-1, missio
 6. Chưa kiểm tra trên GitHub thật (nền sáng/tối, di động).
 7. Chưa làm bộ đếm lượt xem; radio chưa có bài.
 
+**Chương 05 Safehouse (desktop rice thật):** `poster-safehouse.svg`. Chụp bằng `gnome-screenshot` sau `wmctrl -k on` (thu nhỏ hết cửa sổ), mở một kitty chạy `fastfetch --structure ...` (bỏ LocalIp/Host/Terminal), rồi `wmctrl -k off`.
+Làm sạch bằng `ffmpeg delogo` (tên thành phố của widget thời tiết, số tin chưa đọc trên icon Discord). Ảnh đầy đủ **không** đưa vào repo (có `user@hostname`, phần cứng); chỉ `tools/shots/rice-desktop-bg.jpg` (640px, làm mờ khi vẽ) và `rice-desktop-fg.jpg` (cắt logo Mint).
+Lần chụp đầu để lộ Discord, Firefox và cửa sổ làm việc nên đã xóa; **luôn làm sạch và xem lại ảnh trước khi commit**. Cửa sổ Cloudflare One Client tự ẩn khi mất focus (không phải lỗi). Máy: X11, Linux Mint 22.3, Cinnamon 6.6.9, MacTahoe theme, Plank, kitty.
+Repo `rice` là riêng tư nên áp phích không có liên kết.
+
 ## 7. Câu hỏi MỞ cho chủ repo (cần trả lời để có chiều sâu thật)
 - Bạn là ai / đang học-làm gì (ví dụ trường, năm học)? Có muốn nhắc tới không?
 - 3 điều thật về bạn mà người lạ không đoán ra (sở thích, thói quen code, sản phẩm tự hào nhất).
