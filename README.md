@@ -22,14 +22,11 @@
 
 <img src="assets/h-missions.svg" alt="03 Missions" width="100%">
 
-<div align="center">
-<table>
-<tr>
-<td><a href="https://github.com/luchub-19/vibeKing"><img src="assets/mission-1.svg" alt="Mission: Hardcore Space Invaders — C++ and raylib shooter with 9 enemy types and a boss every 5 waves" width="400"></a></td>
-<td><img src="assets/mission-2.svg" alt="Classified mission, details redacted" width="400"></td>
-</tr>
-</table>
-</div>
+<a href="https://github.com/luchub-19/vibeKing"><img src="assets/poster-vibeking.svg" alt="Mission 01: Hardcore Space Invaders, a C++ and raylib shooter with nine enemy types and a boss every fifth wave" width="100%"></a>
+
+<img src="assets/poster-classified.svg" alt="Mission 02: classified, details redacted" width="100%">
+
+<sub>Screenshots are the game's own built-in showcase scenes (combat, boss). Sprites: Kenney, CC0.</sub>
 
 <img src="assets/h-inventory.svg" alt="04 Inventory" width="100%">
 

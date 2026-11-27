@@ -438,40 +438,101 @@ def hud(st):
 
 
 # =============================================================================
-# 5. NHIỆM VỤ
+# 5. ÁP PHÍCH NHIỆM VỤ (kiểu Rockstar 'Only in Leonida')
 # =============================================================================
-def mission(file, tag, title, tsize, sub, desc, reward, level, status, classified=False):
-    W, H = 410, 270
-    lines = wrap(desc, REG, 15, 340)
-    ds = "".join(T(REG, ln, 15, 38, 156 + i * 21, CREAM, extra='opacity=".85"') for i, ln in enumerate(lines))
-    stars = "".join(f'<path d="{star_path(270 + i * 22 + 11, 44, 8)}" fill="{GOLD if i < level else "none"}" stroke="{GOLD}" stroke-opacity="{1 if i < level else .35}"/>' for i in range(5))
-    chips, cx = "", 38
-    for r in reward:
-        w = BOLD.width(r, 12, 1) + 22
-        chips += f'<rect x="{n(cx)}" y="222" width="{n(w)}" height="24" rx="12" fill="none" stroke="{CYAN}" stroke-opacity=".8"/>{T(BOLD, r, 12, cx + w / 2, 238, CYAN, "middle", 1)}'
+import base64
+
+
+def b64img(name):
+    return "data:image/jpeg;base64," + base64.b64encode((ROOT / "tools" / "shots" / name).read_bytes()).decode()
+
+
+def hexagon(cx, cy, r):
+    pts = [(cx + r * math.cos(math.radians(60 * i - 90)), cy + r * math.sin(math.radians(60 * i - 90))) for i in range(6)]
+    return " ".join(f"{n(x)},{n(y)}" for x, y in pts)
+
+
+def padlock(cx, cy, s):
+    return (f'<g transform="translate({cx} {cy}) scale({s})"><path d="M-34,-8 V-34 A34,34 0 0 1 34,-34 V-8" fill="none" stroke="{CREAM}" stroke-width="12" stroke-linecap="round"/>'
+            f'<rect x="-56" y="-8" width="112" height="86" rx="12" fill="{INK}" stroke="{CREAM}" stroke-width="6"/>'
+            f'<circle cx="0" cy="26" r="11" fill="{PINK}"/><rect x="-4.5" y="30" width="9" height="26" rx="3" fill="{PINK}"/></g>')
+
+
+def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None, redacted=False, alt="", label="VIEW ON GITHUB"):
+    """Áp phích kiểu Rockstar 'Only in Leonida': nền + hình cắt tiền cảnh + hook + tiểu sử + câu thoại."""
+    W, H = 830, 420
+    hx, hy, hr = 648, 196, 132
+    # --- nền
+    if bg:
+        k = 1.04
+        bgimg = (f'<image href="{b64img(bg)}" x="-1" y="-96" width="{n(800 * k)}" height="{n(600 * k)}" preserveAspectRatio="none" filter="url(#blur)"/>')
+    else:
+        bgimg = (f'<rect width="{W}" height="{H}" fill="url(#psky)"/>{skyline(0, 830, 300, 77, 110, fill="#2A0F5E", wins=False)}'
+                 f'<rect y="300" width="{W}" height="{H - 300}" fill="{INK}"/>')
+    # --- hình cắt tiền cảnh
+    if fg:
+        src, (sx, sy, sw, sh) = fg
+        kk = (2 * hr * 0.9) / sw
+        dx, dy = hx - sw * kk / 2, hy - sh * kk / 2
+        fgimg = (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath>'
+                 f'<g clip-path="url(#hexc)"><rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="#0B0320"/>'
+                 f'<image href="{b64img(src)}" x="{n(dx - sx * kk)}" y="{n(dy - sy * kk)}" width="{n(800 * kk)}" height="{n(600 * kk)}" preserveAspectRatio="none"/></g>')
+    else:
+        fgimg = (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath>'
+                 f'<g clip-path="url(#hexc)"><rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="url(#psky)"/></g>{padlock(hx, hy - 24, 1.05)}')
+    hexline = (f'<polygon points="{hexagon(hx, hy, hr)}" fill="none" stroke="{PINK}" stroke-width="3" filter="url(#bloom)" opacity=".9"/>'
+               f'<polygon points="{hexagon(hx, hy, hr)}" fill="none" stroke="{CREAM}" stroke-width="2"/>')
+    # --- chữ
+    tl = "".join(T(ANTON, t, 54, 36, 116 + i * 58, CREAM, track=1, extra='stroke="#0B0320" stroke-width="4" paint-order="stroke"') for i, t in enumerate(title_lines))
+    y = 116 + (len(title_lines) - 1) * 58 + 36
+    hk = T(SEMI, hook.upper(), 18, 36, y, GOLD, track=4)
+    y += 30
+    if redacted:
+        rr = random.Random(5)
+        bd = "".join(f'<rect x="36" y="{y - 14 + i * 24}" width="{rr.randint(250, 400)}" height="17" fill="#000" stroke="{CREAM}" stroke-opacity=".15"/>' for i in range(3))
+        y += 72
+    else:
+        ls = wrap(bio, REG, 16, 410)
+        bd = "".join(T(REG, ln, 16, 36, y + i * 23, CREAM, extra='opacity=".92"') for i, ln in enumerate(ls))
+        y += 23 * len(ls) + 12
+    qs = "".join(T(SEMI, f"“{q}”", 17, 52, y + 17 + i * 24, CREAM, track=.5) for i, q in enumerate(quotes))
+    qbar = f'<rect x="36" y="{y}" width="3" height="{24 * len(quotes) + 2}" fill="{PINK}"/>'
+    cx, cy = 36, 384
+    ch = ""
+    for c in chips:
+        w = BOLD.width(c, 12, 1.5) + 24
+        ch += f'<rect x="{n(cx)}" y="{cy}" width="{n(w)}" height="24" rx="12" fill="{INK}" fill-opacity=".6" stroke="{CYAN}" stroke-opacity=".85"/>{T(BOLD, c, 12, cx + w / 2, cy + 16, CYAN, "middle", 1.5)}'
         cx += w + 8
-    tagw = BOLD.width(tag, 14, 3) + 36
+    bw = BOLD.width(label, 13, 3) + 44
+    btn = (f'<g><rect x="{n(794 - bw)}" y="{cy - 2}" width="{n(bw)}" height="28" fill="{PINK}" transform="skewX(0)"/>'
+           f'{T(BOLD, label, 13, 794 - bw / 2, cy + 17, INK, "middle", 3)}</g>')
+    stamp = ""
+    if redacted:
+        stamp = (f'<g transform="rotate(-9 560 330)"><rect x="440" y="300" width="250" height="62" fill="none" stroke="{HOT}" stroke-width="5"/>'
+                 f'{T(ANTON, "CLASSIFIED", 46, 565, 349, HOT, "middle", 6)}</g>')
     body = f"""
-<defs>
- <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A0F5E"/><stop offset="1" stop-color="#140729"/></linearGradient>
- <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{PINK}"/><stop offset="1" stop-color="{ORANGE}"/></linearGradient>
- <linearGradient id="sh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
- <clipPath id="c"><rect width="{W}" height="{H}" rx="18"/></clipPath>
+<defs>{DEFS_COMMON}
+ <filter id="blur"><feGaussianBlur stdDeviation="1.4"/></filter>
+ <linearGradient id="psky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14062F"/><stop offset=".5" stop-color="#5B2A9D"/><stop offset=".8" stop-color="#E8507A"/><stop offset="1" stop-color="#FF9A5A"/></linearGradient>
+ <linearGradient id="tint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{PURPLE}" stop-opacity=".38"/><stop offset="1" stop-color="{PINK}" stop-opacity=".30"/></linearGradient>
+ <linearGradient id="lefty" x1="0" x2="1"><stop offset="0" stop-color="{INK}" stop-opacity=".93"/><stop offset=".46" stop-color="{INK}" stop-opacity=".6"/><stop offset=".8" stop-color="{INK}" stop-opacity="0"/></linearGradient>
+ <radialGradient id="horizon" cx=".78" cy="1.05" r=".7"><stop offset="0" stop-color="{ORANGE}" stop-opacity=".7"/><stop offset="1" stop-color="{ORANGE}" stop-opacity="0"/></radialGradient>
+ <clipPath id="frame"><rect width="{W}" height="{H}" rx="6"/></clipPath>
 </defs>
-<rect width="{W}" height="{H}" rx="18" fill="url(#bg)"/>
-<g clip-path="url(#c)"><rect x="0" y="0" width="8" height="{H}" fill="url(#bar)"/>
-<g transform="skewX(-20)"><rect x="-120" y="0" width="70" height="{H}" fill="url(#sh)"><animate attributeName="x" values="-120;560;560" keyTimes="0;.45;1" dur="7s" repeatCount="indefinite"/></rect></g></g>
-<rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="17" fill="none" stroke="{PINK}" stroke-opacity=".35"/>
-<g transform="skewX(-14)"><rect x="38" y="30" width="{n(tagw)}" height="26" fill="{PINK}"/></g>
-{T(BOLD, tag, 14, 38 + tagw / 2 - 43 * SKEW14 + 0, 49, INK, "middle", 3)}{stars}
-{T(ANTON, title, tsize, 38, 112, CREAM, track=1)}
-{T(SEMI, sub, 15, 38, 136, GOLD, track=1)}
-{ds}
-{chips}
-<circle cx="{W - 122}" cy="234" r="5" fill="{HOT if classified else GOLD}"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="indefinite"/></circle>
-{T(BOLD, status, 12, W - 110, 239, CREAM, track=2)}
+<g clip-path="url(#frame)">
+{bgimg}
+<rect width="{W}" height="{H}" fill="url(#tint)"/><rect width="{W}" height="{H}" fill="url(#horizon)"/>
+<rect width="{W}" height="{H}" fill="url(#lefty)"/>
+<g transform="skewX(-12)"><rect x="470" y="-10" width="40" height="{H + 20}" fill="{PINK}" opacity=".16"/><rect x="518" y="-10" width="8" height="{H + 20}" fill="{GOLD}" opacity=".35"/></g>
+<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -7;0 0" dur="5s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>{fgimg}{hexline}</g>
+<g transform="skewX(-14)"><rect x="40" y="26" width="{n(BOLD.width(kicker, 13, 4) + 34)}" height="26" fill="{PINK}"/></g>
+{T(BOLD, kicker, 13, 36 + (BOLD.width(kicker, 13, 4) + 34) / 2 - 5, 44, INK, "middle", 4)}
+{tl}{hk}{bd}{qbar}{qs}{ch}{btn}{stamp}
+<rect width="{W}" height="{H}" fill="url(#vig)"/><rect width="{W}" height="{H}" filter="url(#grain)" opacity=".12"/>
+</g>
+<rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="5" fill="none" stroke="{CREAM}" stroke-opacity=".2"/>
 """
-    write(file, svg(W, H, body, f"{tag}: {title}", desc))
+    write(file, svg(W, H, body, alt or " ".join(title_lines), bio if not redacted else "Redacted classified mission"))
 
 
 # =============================================================================
@@ -533,11 +594,13 @@ if __name__ == "__main__":
     heading("h-radio.svg", "05", "RADIO", "LUCHUB FM")
     phone()
     hud(stats)
-    mission("mission-1.svg", "MISSION", "HARDCORE INVADERS", 40, "C++  •  RAYLIB",
-            "Endless waves, 9 enemy types and a boss every 5 waves. Kill the medic first.",
-            ["C++", "RAYLIB", "GLSL"], 4, "OPEN SOURCE")
-    mission("mission-2.svg", "CLASSIFIED", "TOP SECRET", 40, "DETAILS REDACTED",
-            "A mission only a few have seen. Clearance required.",
-            ["???", "???"], 3, "LOCKED", classified=True)
+    poster("poster-vibeking.svg", "MISSION 01", ["HARDCORE", "SPACE INVADERS"], "Hold the last line",
+           "Endless waves. Nine kinds of enemy. A boss every fifth wave. The medic dies first, or nothing does.",
+           ["Kill the medic first.", "Insert coin."], ["C++", "RAYLIB", "GLSL"],
+           bg="vibeking-combat.jpg", fg=("vibeking-boss.jpg", (324, 56, 152, 150)),
+           alt="Mission 01: Hardcore Space Invaders, a C++ and raylib shooter")
+    poster("poster-classified.svg", "MISSION 02", ["TOP", "SECRET"], "Clearance required", "",
+           ["Some missions never make the credits."], ["???", "???"], redacted=True,
+           alt="Mission 02: classified, details redacted", label="ACCESS DENIED")
     inventory()
     radio(tracks)

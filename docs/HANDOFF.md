@@ -105,7 +105,13 @@ Workflow có `concurrency` để hai lượt chạy không tranh nhánh `output`
 **v2 một phần (2026-11-27):** `banner.svg` và `hud.svg` đã dựng lại nhiều lớp (trời/mây/mặt trời/skyline xa mờ → biển → logo có quang sai màu →
 đường, đèn đường có quầng sáng, xe chạy, đàn chim → cọ tiền cảnh che một phần chữ → vignette + hạt phim). HUD đặt trên cảnh phố, bố cục theo mục 4
 (thanh hồng/cyan/tím kèm biểu tượng, tiền xếp chồng, sao truy nã, minimap, dòng mục tiêu tính từ số commit còn thiếu).
-**Vẫn còn kiểu v1 (template, cần làm lại):** `phone.svg`, `mission-*.svg`, `inventory.svg`, `radio.svg`, 5 tiêu đề mục `h-*.svg`.
+**Áp phích nhiệm vụ (xong lần 1):** `poster-vibeking.svg` (nền = cảnh combat thật của vibeKing làm mờ + phủ màu, hình cắt = boss Sentinel trong khung lục giác nổi)
+và `poster-classified.svg` (hồ sơ mật: thanh đen che chữ, ổ khóa, con dấu CLASSIFIED, không lộ tên dự án riêng tư). Hàm `poster()` trong `build_assets.py`.
+Ảnh chụp game nằm ở `tools/shots/*.jpg` (nhúng base64 vào SVG vì SVG qua `<img>` không tải được file ngoài). Cách chụp lại (không đụng desktop):
+`HOME=<thư mục tạm> xvfb-run -a -s "-screen 0 1280x720x24" space_invaders --scene=combat|boss|menu --capture=out.png --capture-frame=240 --lang=en --quality=high`
+(game build từ repo vibeKing với raylib 5.5 build bằng CMake trong thư mục tạm). Đây là cảnh trình diễn dựng sẵn của game, không phải ván chơi thật — README đã ghi chú.
+Chữ trong áp phích (hook "Hold the last line" lấy từ menu game; bio và câu thoại "Kill the medic first." / "Insert coin." / "Some missions never make the credits." do Claude viết từ README và game) **chưa được chủ repo duyệt**.
+**Vẫn còn kiểu v1 (template, cần làm lại):** `phone.svg`, `inventory.svg`, `radio.svg`, 5 tiêu đề mục `h-*.svg`. Đã xóa `mission-*.svg` cũ khỏi hàm sinh.
 Đã thử và bỏ: biển neon "LUCHUB" trên mái nhà (bị chữ logo và cọ che hết, không đọc được).
 Bảng màu tự chọn (chưa phải màu chính thức của game): PINK #FF3E8A, HOT #FF5C7A, ORANGE #FF9A3C, GOLD #FFD35A, PURPLE #7B3FE4, CYAN #35E6D8, nền #140729 / #0B0320.
 Điểm yếu cần sửa (xếp theo tác động):
@@ -125,7 +131,6 @@ Các SVG: banner (1200×440), 5 tiêu đề mục, phone, hud, mission-1, missio
 - 3 điều thật về bạn mà người lạ không đoán ra (sở thích, thói quen code, sản phẩm tự hào nhất).
 - Câu thoại/slogan kiểu nhân vật của bạn (ví dụ "Another day in paradise, right?" phiên bản của bạn).
 - Ảnh/GIF thật của dự án công khai (vibeKing: chụp màn hình/GIF chơi game), ảnh desktop rice (nếu muốn khoe).
-- Thẻ "CLASSIFIED": giữ, thay bằng repo công khai nào, hay mở công khai dự án đang che?
 - 3+ bài radio và tên đài (hiện là "LUCHUB FM 19.11", tên do Claude đặt, chưa được duyệt).
 - Bộ đếm lượt xem: có chấp nhận một dịch vụ ngoài không?
 - Màu/cỡ logo/tagline: hiện là "C++ • RUST • PYTHON", "GAMES • TOOLS • LINUX RICE", "COMMITS NEVER SLEEP" (Claude tự đặt).
