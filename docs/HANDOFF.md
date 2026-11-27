@@ -50,6 +50,14 @@ logo xếp tầng có cảnh trong ruột chữ, thêm mission `didau`, hồ sơ
 - Tiền trên HUD: **2 số, ngân hàng (tím) = contribution năm × 10, tiền mặt (xanh lá) = commit 30 ngày × 10** (thay cho cash + earned).
 - Mặt tiền Art Deco: **giữ pastel**, thêm viền trắng và vài điểm vàng kim.
 
+### Quyết định cho T1.1 (2026-11-27)
+- Biển neon trên mặt tiền: **tên khách sạn tự đặt** (CORAL, SEAGLASS, LUNA, PALMETTO, SOLANA; tránh tên khách sạn thật ở Ocean Drive) + **một dấu riêng** `LUCHUB` (chữ dọc trên tháp) và `HOTEL` trên mái che.
+- Chóp tháp giữa: **kiểu ống khói tàu neon** (REFERENCES D6), mũ bậc + cột cờ ngắn; không dùng chóp kim (D13 chưa có nguồn).
+- Thêm ngoài danh sách bắt buộc: **góc bo Streamline (D7), phù điêu nhiệt đới (D9), sảnh terrazzo (D11)**.
+
+### Quyết định cho T1.2 (2026-11-27)
+- Xe chữ ký: **trắng, targa, sọc mảnh 2 màu (hồng + cam)**, trạng thái chính **đèn lật mở + bật, đang chạy**.
+
 ### Quyết định cho T0.2 (2026-11-27) — chi tiết ở `docs/STYLE.md`
 - Bảng màu **lai: trời trên lạnh, chân trời ấm**; bóng lạnh, nắng ấm.
 - Xanh lá **chỉ làm màu phụ** (cọ, nước nông, pastel bạc hà, tiền mặt HUD); không có neon xanh lá.
@@ -112,6 +120,12 @@ tools/art/                Thư viện vẽ (T0.3, tách nguyên văn từ build_
                           T0.4 thêm: `scene.py` (Scene 4 lượt col/sh/em/ln), `post.py` (bloom, halftone, viền mực raster, quang sai, LUT 3D, vignette, grain),
                           `render.py` (Chrome 2× song song, xuất WebP/JPEG theo ngân sách, nhúng base64, tile grain), `trial_t04.py` (sinh `lab/t04-pipeline/`).
                           Cần venv có fonttools + pillow + numpy; chưa nối vào build_assets (banner v3 sẽ dùng ở T2.3).
+                          T1.1 thêm: `deco.py` (bộ sinh mặt tiền Art Deco, `Deco` + `facade()`, trả `Info` có điểm neo/chữ neon/cửa sổ cho hoạt ảnh),
+                          `sample_t11.py` (sinh `docs/style/t11-deco.jpg`).
+                          T1.2 thêm vào `car.py` (dưới hàm v2 `wheel`/`car`, giữ nguyên từng byte): `Car` + `sports_car()` trả `CarInfo`
+                          (bánh, mắt đèn, đèn hậu, điểm neo), `car.defs()` (tiền tố `cr-`), `wheel_period()`; `sample_t12.py` (sinh `docs/style/t12-car.jpg`, `--anim` ra SVG động). `palette.py` có thêm bảng v3 (STYLE mục 1) + `tones()`, `LAYERS`; DEEP v3 tên là `SH_DEEP`.
+                          T1.3 thêm vào `palm.py` (dưới hàm v2 `palm`, giữ nguyên): `Palm` + `palm_tree()` trả `PalmInfo` (3 loài coconut/royal/dwarf, 3 mức chi tiết theo `layer`,
+                          viền nắng + viền neon `env`, SMIL 3 tầng cây/tán/tàu lá, `sway_t` dựng khung tĩnh); `sample_t13.py` (sinh `docs/style/t13-palm.jpg`, `--anim` ra SVG động).
 tools/fetch_stats.py      GraphQL → data/stats.json (commit 30 ngày, ngày hoạt động, đóng góp năm)
 tools/preview.py          Bảng ảnh cục bộ bằng Chrome headless: mỗi mốc SMIL một cột khổ 390 px, nền trắng (`--dark` cho nền tối)
 tools/budget.py           Kiểm dung lượng: cả trang ≤ 5 MB, banner ≤ 1 MB (thoát mã 1 nếu vượt). Chỉ thư viện chuẩn
@@ -180,6 +194,17 @@ Hook "Hold the last line" lấy từ menu game vibeKing.
   T0.3 **xong**: 12 SVG giống hệt từng byte và 48 PNG (12 SVG × mốc 0/2.4/6/12 s) diff = 0 so với trước khi tách.
   T0.4 **xong, chủ repo đã xác nhận trên GitHub (27/11)**: SVG có nền WebP/JPEG nhúng (data URI) + SMIL hiển thị được qua `<img>`. Code ở `tools/art/scene.py`, `post.py`, `render.py`, `trial_t04.py`. Nhánh tạm `lab-t04` và thư mục `lab/` đã xoá; chạy `python tools/art/trial_t04.py` để sinh lại 3 SVG thử.
   T0.5 **xong**: `tools/preview.py` xuất bảng nhiều mốc (cột 390 px, nền trắng, `--dark`); `tools/budget.py` kiểm ngân sách (cả trang ≤ 5 MB, banner ≤ 1 MB, đo byte gốc, 1 MB = 1 MiB). Hiện trang ~0.95 MB, banner 91 KB, đạt. Ảnh rắn từ nhánh `output` không đo được.
+  T1.1 **xong tới mốc 🔶, CHỜ CHỦ REPO DUYỆT** trang mẫu `docs/style/t11-deco.jpg` (chưa commit). Chạy lại: `<venv>/bin/python tools/art/sample_t11.py`.
+  Lưu ý kỹ thuật: Chrome headless vẽ sai khi khung thấp (~112 px ra gần đen) → `sample_t11.run()` render khung ≥ 320 px rồi cắt.
+  Neon trong `deco.py` là bản tối thiểu, T1.4 thay bằng `neon.py`. Chữ neon dọc ở cỡ nhỏ (k ≈ .5) hơi nhoè.
+  T1.2 **xong tới mốc 🔶, CHỜ CHỦ REPO DUYỆT** trang mẫu `docs/style/t12-car.jpg` (chưa commit). Chạy lại: `<venv>/bin/python tools/art/sample_t12.py [--anim out.svg]`.
+  Ghi chú T1.2: toạ độ xe cục bộ dài 200 (k = 1 → 200 px), mặt đường y = 0. Hông xe phản chiếu phía sau người xem (trời đông/biển) nên chỉ đúng
+  khi máy quay ở phía biển; banner nhìn về bắc thì xe chạy dọc phố về điểm tụ — T2.1 cần quyết góc xe (ngang hay 3/4), bộ sinh hiện chỉ có nhìn ngang.
+  Phản chiếu đường ướt dựng lại thân xe trong một Scene phụ (lượt màu) rồi lật gương. SVG động: xe vẽ bằng nét vector (raster_ink=False), không có halftone/viền mực raster.
+  T1.3 **xong tới mốc 🔶, CHỜ CHỦ REPO DUYỆT** trang mẫu `docs/style/t13-palm.jpg` (chưa commit). Chạy lại: `<venv>/bin/python tools/art/sample_t13.py [--anim out.svg]`.
+  Chủ repo chốt trước khi vẽ (27/11; PLAN mục G không có câu cho T1.3): thư viện **cọ dừa + cọ hoàng gia + cọ lùn**; màu lá **theo STYLE (gần INK + viền sáng)**; đung đưa **cả tán + từng tàu lá**.
+  Ghi chú T1.3: một cây vector (L2, k ≈ 1) nặng khoảng 50 KB trong SVG động (đã dùng `<use>` cho viền và đường đi tương đối nguyên); 6 cây ≈ 300 KB, cân với ngân sách banner ≤ 1 MB.
+  Cọ L0 chỉ mờ khí quyển 30% (STYLE 1.8 ghi 55%) vì là bóng ngược sáng; nếu duyệt thì sửa STYLE 1.8. Lá khô rũ và quả dừa vẽ sau cùng nên che gốc tán.
   Tiếp theo: Giai đoạn 1 (T1.x) theo `docs/PLAN-v3.md`. T0.3 nhớ: build_assets dùng Anton thay khi thiếu Pricedown; Actions không dùng Pricedown. `style_sample.py` là nguyên mẫu của `palette.py` + `post.py`.
 - REFERENCES còn yếu: chưa có toàn văn review IGN/Eurogamer/GameSpot. Nếu chủ repo dán đoạn về HUD/điện thoại thì nâng độ tin cậy. Chưa xem được nội dung ảnh "Vice City Postcard" (chủ repo mở tay, không tải vào repo).
 - Đã xác nhận SMIL chạy trên GitHub thật. Vẫn cần kiểm tra nền sáng và app mobile.
