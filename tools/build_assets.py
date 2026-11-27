@@ -154,7 +154,7 @@ def skyline(x0, x1, base, seed, tall, fill="#21094A", wins=True):
     return "".join(out + (wl if wins else []))
 
 
-TAGLINES = ["C++  •  RUST  •  PYTHON", "GAMES  •  TOOLS  •  LINUX RICE", "COMMITS NEVER SLEEP"]
+TAGLINES = ["C++  •  PYTHON  •  TYPESCRIPT", "GAMES  •  TOOLS  •  LINUX RICE", "COMMITS NEVER SLEEP"]
 
 DEFS_COMMON = """
  <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
@@ -279,75 +279,42 @@ def banner():
 
 
 # =============================================================================
-# 2. TIÊU ĐỀ MỤC
+# 2. DẢI TIÊU ĐỀ CHƯƠNG (thay cho tiêu đề số + hộp)
 # =============================================================================
-def heading(file, num, title, tag):
-    W, H = 830, 70
-    tw, gw = ANTON.width(title, 40, 2), SEMI.width(tag, 14, 5)
-    lx = 108 + tw + 16
-    body = f"""
-<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="{PINK}"/><stop offset="1" stop-color="{ORANGE}"/></linearGradient></defs>
-<g transform="skewX(-14)"><rect x="30" y="10" width="64" height="44" fill="url(#g)"/></g>
-{T(ANTON, num, 30, 46, 44, INK, "middle")}
-{T(ANTON, title, 40, 108, 46, CREAM, track=2)}
-<rect x="108" y="58" width="0" height="3" fill="{PINK}"><animate attributeName="width" values="0;{n(tw)}" dur="1.2s" fill="freeze"/></rect>
-{T(SEMI, tag, 14, 818, 44, CREAM, "end", 5, DIM)}
-<rect x="{n(lx)}" y="40" width="{n(818 - gw - 16 - lx)}" height="1" fill="{CREAM}" opacity=".18"/>
-"""
-    write(file, svg(W, H, body, f"{num} {title}"))
+HUES = {"pink": ("#2B0A5E", "#E8507A", PINK), "orange": ("#4B1A78", "#FF9A3C", ORANGE),
+        "violet": ("#0A0328", "#7B3FE4", "#B58CFF"), "cyan": ("#0A0328", "#2FC9D8", CYAN)}
 
 
-# =============================================================================
-# 3. ĐIỆN THOẠI
-# =============================================================================
-def phone():
-    W, H = 830, 470
-    cards = [
-        ("Writes C++, Rust and Python. Builds games, tools and the odd Linux setup.", "now"),
-        ("Tweaks Linux desktops way too much. Sway, terminals, prompts, the lot.", "2m ago"),
-        ("Stuck on a bug or want to collab? Find me on GitHub.", "5m ago"),
-    ]
-    cs, y = [], 46
-    for i, (txt, when) in enumerate(cards):
-        lines = wrap(txt, REG, 17, 330)
-        h = 50 + 24 * len(lines)
-        tx = "".join(T(REG, ln, 17, 440, y + 66 + j * 24, CREAM) for j, ln in enumerate(lines))
-        b = 0.5 + i * 0.7
-        cs.append(f"""<g opacity="0"><animate attributeName="opacity" values="0;1" dur=".5s" begin="{b}s" fill="freeze"/>
-<animateTransform attributeName="transform" type="translate" values="40 0;0 0" dur=".6s" begin="{b}s" fill="freeze" calcMode="spline" keySplines=".2 .8 .2 1" keyTimes="0;1"/>
-<rect x="370" y="{y}" width="430" height="{h + 24}" rx="22" fill="#241049" stroke="{PINK}" stroke-opacity=".5"/>
-<circle cx="408" cy="{y + 36}" r="19" fill="url(#av)"/>{T(ANTON, "L", 24, 408, y + 45, INK, "middle")}
-{T(BOLD, "luchub-19", 18, 440, y + 40, GOLD, track=1)}{T(REG, when, 14, 782, y + 40, CREAM, "end", 0, 'opacity=".5"')}
-{tx}</g>""")
-        y += h + 24 + 22
-    apps = ""
-    for i, (lab, col) in enumerate([("GH", PINK), ("C++", ORANGE), ("PY", CYAN), ("RS", GOLD), ("TS", PURPLE), ("$_", HOT)]):
-        ax, ay = 78 + (i % 3) * 66, 244 + (i // 3) * 76
-        apps += (f'<rect x="{ax}" y="{ay}" width="52" height="52" rx="14" fill="{col}" opacity=".92"/>'
-                 f'{T(ANTON, lab, 20 if len(lab) < 3 else 17, ax + 26, ay + 33, INK, "middle")}')
+def chapter(file, num, title, sub, hue, right=False, seed=1):
+    W, H = 830, 104
+    top, bot, acc = HUES[hue]
+    tw = ANTON.width(title, 56, 2)
+    tx = (W - 40 - tw) if right else 40
+    cut = f"40,0 {W},0 {W},{H} 0,{H}" if right else f"0,0 {W},0 {W - 40},{H} 0,{H}"
+    kick = f"CHAPTER {num}"
+    ax = tx if not right else tx + tw
+    sx = W - 40 if not right else 40
+    streak_w = 60
     body = f"""
 <defs>
- <linearGradient id="scr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A0F5E"/><stop offset=".55" stop-color="#9B2F8F"/><stop offset="1" stop-color="#FF7A55"/></linearGradient>
- <linearGradient id="av" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{GOLD}"/><stop offset="1" stop-color="{PINK}"/></linearGradient>
- <linearGradient id="btn" x1="0" x2="1"><stop offset="0" stop-color="{PINK}"/><stop offset="1" stop-color="{ORANGE}"/></linearGradient>
+ <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{top}"/><stop offset="1" stop-color="{bot}"/></linearGradient>
+ <linearGradient id="cs" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <clipPath id="cc"><polygon points="{cut}"/></clipPath>
 </defs>
-{panel(W, H)}
-<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -6;0 0" dur="5s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>
- <rect x="52" y="26" width="256" height="418" rx="36" fill="{INK}" stroke="{CREAM}" stroke-opacity=".5" stroke-width="2"/>
- <rect x="62" y="36" width="236" height="398" rx="28" fill="url(#scr)"/>
- <rect x="150" y="44" width="60" height="14" rx="7" fill="{INK}"/>
- {T(BOLD, "VICE CITY", 13, 82, 74, CREAM, track=2)}{T(BOLD, "5G", 13, 278, 74, CREAM, "end")}
- {T(ANTON, "CONTACTS", 28, 80, 124, CREAM, track=2)}
- <rect x="78" y="140" width="204" height="74" rx="16" fill="{INK}" opacity=".55"/>
- <circle cx="112" cy="177" r="22" fill="url(#av)"/>{T(ANTON, "L", 28, 112, 187, INK, "middle")}
- {T(BOLD, "luchub-19", 19, 146, 173, CREAM)}{T(REG, "github.com/luchub-19", 13, 146, 194, CREAM, extra='opacity=".75"')}
- {apps}
- <rect x="78" y="402" width="204" height="22" rx="11" fill="url(#btn)"/>{T(BOLD, "FOLLOW ON GITHUB", 13, 180, 418, INK, "middle", 2)}
+<g clip-path="url(#cc)">
+ <rect width="{W}" height="{H}" fill="url(#cg)"/>
+ <circle cx="{W * (0.78 if not right else 0.22):.0f}" cy="{H + 6}" r="54" fill="{GOLD}" opacity=".75"/>
+ <g opacity=".95">{skyline(0, 830, H, seed, 52, fill="#14062F", wins=True)}</g>
+ <g transform="skewX(-20)"><rect x="-80" y="0" width="{streak_w}" height="{H}" fill="url(#cs)"><animate attributeName="x" values="-80;900;900" keyTimes="0;.5;1" dur="9s" repeatCount="indefinite"/></rect></g>
+ {T(BOLD, kick, 12, tx if not right else tx + tw, 30, GOLD, "start" if not right else "end", 5)}
+ {T(ANTON, title, 56, tx, 82, CREAM, track=2, extra='stroke="#0B0320" stroke-width="5" paint-order="stroke"')}
+ <rect x="{n(tx if not right else tx + tw - 90)}" y="90" width="90" height="4" fill="{acc}"/>
+ {T(SEMI, sub, 13, sx, 30, CREAM, "end" if not right else "start", 4, 'opacity=".75"')}
+ <rect width="{W}" height="{H}" filter="url(#grain)" opacity=".12"/>
 </g>
-{"".join(cs)}
 """
-    write("phone.svg", svg(W, H, body, "In-game phone with messages from luchub-19",
-                           "Writes C++, Rust and Python. Tweaks Linux desktops. Find me on GitHub."))
+    body = body.replace("<defs>", f"<defs>{DEFS_COMMON}", 1)
+    write(file, svg(W, H, body, f"Chapter {num}: {title}"))
 
 
 # =============================================================================
@@ -458,7 +425,21 @@ def padlock(cx, cy, s):
             f'<circle cx="0" cy="26" r="11" fill="{PINK}"/><rect x="-4.5" y="30" width="9" height="26" rx="3" fill="{PINK}"/></g>')
 
 
-def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None, redacted=False, alt="", label="VIEW ON GITHUB"):
+def figure_scene(hx, hy, hr):
+    """Hình cắt nhân vật: bóng người đội mũ trùm nhìn từ sau, đứng trước thành phố hoàng hôn."""
+    bx, by = hx, hy + hr - 6
+    return (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath><g clip-path="url(#hexc)">'
+            f'<rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="url(#psky)"/>'
+            f'<circle cx="{hx + 34}" cy="{hy + 30}" r="46" fill="{GOLD}"/><circle cx="{hx + 34}" cy="{hy + 30}" r="46" fill="{ORANGE}" opacity=".35"/>'
+            f'{skyline(hx - hr, hx + hr, hy + 66, 41, 86, fill="#2A0F5E", wins=True)}'
+            f'<rect x="{hx - hr}" y="{hy + 66}" width="{2 * hr}" height="{hr}" fill="{INK}"/>'
+            f'<g transform="translate({bx} {by})"><path d="M-82,0 C-82,-64 -48,-88 0,-88 C48,-88 82,-64 82,0Z" fill="{INK}"/>'
+            f'<ellipse cx="0" cy="-104" rx="40" ry="42" fill="{INK}"/>'
+            f'<path d="M-82,0 C-82,-64 -48,-88 0,-88 C48,-88 82,-64 82,0" fill="none" stroke="{PINK}" stroke-width="2.5" opacity=".85"/>'
+            f'<path d="M-40,-104 C-40,-150 40,-150 40,-104" fill="none" stroke="{ORANGE}" stroke-width="2.5" opacity=".9"/></g></g>')
+
+
+def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None, redacted=False, alt="", label="VIEW ON GITHUB", card=None):
     """Áp phích kiểu Rockstar 'Only in Leonida': nền + hình cắt tiền cảnh + hook + tiểu sử + câu thoại."""
     W, H = 830, 420
     hx, hy, hr = 648, 196, 132
@@ -470,13 +451,15 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
         bgimg = (f'<rect width="{W}" height="{H}" fill="url(#psky)"/>{skyline(0, 830, 300, 77, 110, fill="#2A0F5E", wins=False)}'
                  f'<rect y="300" width="{W}" height="{H - 300}" fill="{INK}"/>')
     # --- hình cắt tiền cảnh
-    if fg:
+    if isinstance(fg, tuple):
         src, (sx, sy, sw, sh) = fg
         kk = (2 * hr * 0.9) / sw
         dx, dy = hx - sw * kk / 2, hy - sh * kk / 2
         fgimg = (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath>'
                  f'<g clip-path="url(#hexc)"><rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="#0B0320"/>'
                  f'<image href="{b64img(src)}" x="{n(dx - sx * kk)}" y="{n(dy - sy * kk)}" width="{n(800 * kk)}" height="{n(600 * kk)}" preserveAspectRatio="none"/></g>')
+    elif fg == "figure":
+        fgimg = figure_scene(hx, hy, hr)
     else:
         fgimg = (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath>'
                  f'<g clip-path="url(#hexc)"><rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="url(#psky)"/></g>{padlock(hx, hy - 24, 1.05)}')
@@ -485,8 +468,9 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
     # --- chữ
     tl = "".join(T(ANTON, t, 54, 36, 116 + i * 58, CREAM, track=1, extra='stroke="#0B0320" stroke-width="4" paint-order="stroke"') for i, t in enumerate(title_lines))
     y = 116 + (len(title_lines) - 1) * 58 + 36
-    hk = T(SEMI, hook.upper(), 18, 36, y, GOLD, track=4)
-    y += 30
+    hl = wrap(hook.upper(), SEMI, 18, 290) if SEMI.width(hook.upper(), 18, 4) > 400 else [hook.upper()]
+    hk = "".join(T(SEMI, ln, 18, 36, y + i * 24, GOLD, track=4) for i, ln in enumerate(hl))
+    y += 24 * len(hl) + 6
     if redacted:
         rr = random.Random(5)
         bd = "".join(f'<rect x="36" y="{y - 14 + i * 24}" width="{rr.randint(250, 400)}" height="17" fill="#000" stroke="{CREAM}" stroke-opacity=".15"/>' for i in range(3))
@@ -510,6 +494,18 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
     if redacted:
         stamp = (f'<g transform="rotate(-9 560 330)"><rect x="440" y="300" width="250" height="62" fill="none" stroke="{HOT}" stroke-width="5"/>'
                  f'{T(ANTON, "CLASSIFIED", 46, 565, 349, HOT, "middle", 6)}</g>')
+    cardsvg = ""
+    if card:
+        cn, ctxt = card
+        cl = wrap(ctxt, REG, 13, 200)
+        chh = 44 + 17 * len(cl)
+        cardsvg = (f'<g opacity="0"><animate attributeName="opacity" values="0;1" dur=".5s" begin="1s" fill="freeze"/>'
+                   f'<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 0" dur="4.5s" begin="1.5s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>'
+                   f'<linearGradient id="cav" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{GOLD}"/><stop offset="1" stop-color="{PINK}"/></linearGradient>'
+                   f'<rect x="470" y="278" width="290" height="{chh}" rx="16" fill="#241049" fill-opacity=".96" stroke="{PINK}" stroke-opacity=".7"/>'
+                   f'<circle cx="498" cy="306" r="15" fill="url(#cav)"/>{T(ANTON, "L", 19, 498, 313, INK, "middle")}'
+                   f'{T(BOLD, cn, 13, 522, 302, GOLD, track=1)}{T(REG, "now", 11, 744, 302, CREAM, "end", 0, DIM)}'
+                   + "".join(T(REG, ln, 13, 522, 321 + j * 17, CREAM) for j, ln in enumerate(cl)) + "</g></g>")
     body = f"""
 <defs>{DEFS_COMMON}
  <filter id="blur"><feGaussianBlur stdDeviation="1.4"/></filter>
@@ -527,7 +523,7 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
 <g><animateTransform attributeName="transform" type="translate" values="0 0;0 -7;0 0" dur="5s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>{fgimg}{hexline}</g>
 <g transform="skewX(-14)"><rect x="40" y="26" width="{n(BOLD.width(kicker, 13, 4) + 34)}" height="26" fill="{PINK}"/></g>
 {T(BOLD, kicker, 13, 36 + (BOLD.width(kicker, 13, 4) + 34) / 2 - 5, 44, INK, "middle", 4)}
-{tl}{hk}{bd}{qbar}{qs}{ch}{btn}{stamp}
+{tl}{hk}{bd}{qbar}{qs}{ch}{btn}{stamp}{cardsvg}
 <rect width="{W}" height="{H}" fill="url(#vig)"/><rect width="{W}" height="{H}" filter="url(#grain)" opacity=".12"/>
 </g>
 <rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="5" fill="none" stroke="{CREAM}" stroke-opacity=".2"/>
@@ -536,22 +532,50 @@ def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None
 
 
 # =============================================================================
-# 6. KHO ĐỒ
+# 6. LOADOUT (kho đồ) — bốn tấm áp phích xiên, chữ lớn tràn ra khỏi khung
 # =============================================================================
-def inventory():
-    W, H = 830, 230
-    items = [("C / C++", "C++", "Games, DSA and raw speed", PINK), ("PYTHON", "Py", "Bots, sockets and tools", CYAN),
-             ("TYPESCRIPT", "TS", "Web and the odd app", PURPLE), ("LINUX", "$_", "Sway, terminals, rice", ORANGE)]
+def loadout():
+    W, H = 830, 352
+    items = [("C / C++", "C++", "Games, DSA, raw speed", PINK, "#7A1F5F", 41),
+             ("PYTHON", "Py", "Scripts and automation", CYAN, "#0F5E66", 52),
+             ("TYPESCRIPT", "TS", "Web apps and tooling", "#B58CFF", "#3B1A8A", 63),
+             ("LINUX", "$_", "Sway, terminals, rice", ORANGE, "#8A3A10", 74)]
+    sk = math.tan(math.radians(12))
+    pw, ph = 160, 236
     out = ""
-    for i, (name, mono, cap, col) in enumerate(items):
-        cx = 110 + i * 203
-        out += f"""<g>
-<circle cx="{cx}" cy="86" r="62" fill="#1E0C45" stroke="{CREAM}" stroke-opacity=".12" stroke-width="2"/>
-<circle cx="{cx}" cy="86" r="62" fill="none" stroke="{col}" stroke-width="4" stroke-linecap="round" stroke-dasharray="70 320"><animateTransform attributeName="transform" type="rotate" values="0 {cx} 86;360 {cx} 86" dur="{7 + i}s" repeatCount="indefinite"/></circle>
-<circle cx="{cx}" cy="86" r="48" fill="{INK}"/>
-{T(ANTON, mono, 38, cx, 100, col, "middle", 1)}
-{T(ANTON, name, 22, cx, 184, CREAM, "middle", 3)}{T(REG, cap, 14, cx, 206, CREAM, "middle", 0, DIM)}</g>"""
-    write("inventory.svg", svg(W, H, panel(W, H) + out, "Inventory: C and C++, Python, TypeScript, Linux"))
+    for i, (name, mono, cap, col, dark, seed) in enumerate(items):
+        x = 14 + i * 196
+        y = 92 + (i % 2) * 22
+        pts = f"{n(x + ph * sk)},{y} {n(x + ph * sk + pw)},{y} {n(x + pw)},{y + ph} {x},{y + ph}"
+        cx = x + ph * sk / 2 + pw / 2
+        cap_lines = wrap(cap, REG, 14, pw - 26)
+        ct = "".join(T(REG, ln, 14, cx, y + ph - 34 + j * 18, CREAM, "middle", 0, 'opacity=".85"') for j, ln in enumerate(cap_lines))
+        out += f"""
+<clipPath id="pc{i}"><polygon points="{pts}"/></clipPath>
+<linearGradient id="pg{i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{dark}"/><stop offset="1" stop-color="{INK}"/></linearGradient>
+<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 0" dur="{5 + i * 0.7:.1f}s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>
+ <g clip-path="url(#pc{i})"><rect x="{x}" y="{y}" width="{pw + ph * sk + 4}" height="{ph}" fill="url(#pg{i})"/>
+  <circle cx="{cx}" cy="{y + ph - 40}" r="50" fill="{col}" opacity=".55"/>
+  <g opacity=".95">{skyline(x, x + 240, y + ph, seed, 60, fill="#0B0320", wins=False)}</g></g>
+ <polygon points="{pts}" fill="none" stroke="{col}" stroke-width="2.5" opacity=".9"/>
+ <path d="{ANTON.path(mono, 118, cx - 4, y + 78, "middle", 1)}" fill="{CYAN}" opacity=".55"/>
+ <path d="{ANTON.path(mono, 118, cx + 4, y + 78, "middle", 1)}" fill="{HOT}" opacity=".55"/>
+ <path d="{ANTON.path(mono, 118, cx, y + 78, "middle", 1)}" fill="{col}" stroke="#0B0320" stroke-width="5" paint-order="stroke"/>
+ {T(ANTON, name, 26, cx, y + ph - 62, CREAM, "middle", 3, 'stroke="#0B0320" stroke-width="4" paint-order="stroke"')}
+ {ct}</g>"""
+    body = f"""
+<defs>{DEFS_COMMON}
+ <linearGradient id="lbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14062F"/><stop offset=".6" stop-color="#4B1D8F"/><stop offset="1" stop-color="#C93A92"/></linearGradient>
+ <clipPath id="lf"><rect width="{W}" height="{H}" rx="6"/></clipPath>
+</defs>
+<g clip-path="url(#lf)"><rect width="{W}" height="{H}" fill="url(#lbg)"/>{clouds(W, 14, 120, 12)}
+ <circle cx="415" cy="{H + 10}" r="190" fill="{ORANGE}" opacity=".18"/>
+ {out}
+ {T(SEMI, "SELECT YOUR WEAPON", 13, 415, 32, CREAM, "middle", 8, 'opacity=".7"')}
+ <rect width="{W}" height="{H}" fill="url(#vig)"/><rect width="{W}" height="{H}" filter="url(#grain)" opacity=".12"/></g>
+<rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="5" fill="none" stroke="{CREAM}" stroke-opacity=".2"/>
+"""
+    write("loadout.svg", svg(W, H, body, "Loadout: C and C++, Python, TypeScript, Linux"))
 
 
 # =============================================================================
@@ -587,12 +611,15 @@ if __name__ == "__main__":
     stats = json.loads((ROOT / "data" / "stats.json").read_text())
     tracks = json.loads((ROOT / "data" / "radio.json").read_text())["tracks"]
     banner()
-    heading("h-phone.svg", "01", "PHONE", "CONTACTS & MESSAGES")
-    heading("h-status.svg", "02", "PLAYER STATUS", "UPDATED DAILY")
-    heading("h-missions.svg", "03", "MISSIONS", "AVAILABLE NOW")
-    heading("h-inventory.svg", "04", "INVENTORY", "EQUIPPED")
-    heading("h-radio.svg", "05", "RADIO", "LUCHUB FM")
-    phone()
+    chapter("h-profile.svg", "01", "PLAYER ONE", "LUCHUB-19 // LEONIDA", "pink", False, 3)
+    chapter("h-status.svg", "02", "PLAYER STATUS", "UPDATED DAILY", "violet", True, 8)
+    chapter("h-missions.svg", "03", "MISSIONS", "AVAILABLE NOW", "orange", False, 13)
+    chapter("h-loadout.svg", "04", "LOADOUT", "EQUIPPED", "cyan", True, 19)
+    poster("poster-profile.svg", "PLAYER 01", ["LUCHUB-19"], "Wants clean code. The bugs have other plans.",
+           "Writes C++ and TypeScript. Public work: a raylib shooter, a hangout planner, a SwayFX desktop with a hand-written shell, and a study platform for data structures.",
+           ["Works on my machine.", "One more commit."], ["C++", "TYPESCRIPT", "LINUX"], fg="figure",
+           alt="Player one: luchub-19, a developer who writes C++ and TypeScript", label="FOLLOW",
+           card=("luchub-19", "Find me on GitHub. Messages answered at the speed of a compile."))
     hud(stats)
     poster("poster-vibeking.svg", "MISSION 01", ["HARDCORE", "SPACE INVADERS"], "Hold the last line",
            "Endless waves. Nine kinds of enemy. A boss every fifth wave. The medic dies first, or nothing does.",
@@ -602,5 +629,6 @@ if __name__ == "__main__":
     poster("poster-classified.svg", "MISSION 02", ["TOP", "SECRET"], "Clearance required", "",
            ["Some missions never make the credits."], ["???", "???"], redacted=True,
            alt="Mission 02: classified, details redacted", label="ACCESS DENIED")
-    inventory()
-    radio(tracks)
+    loadout()
+    if not tracks[0]["title"].startswith("Your track"):   # radio chỉ dựng khi có bài thật
+        radio(tracks)

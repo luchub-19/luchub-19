@@ -1,26 +1,18 @@
 <div align="center">
 
-<img src="assets/banner.svg" alt="luchub-19 — C++, Rust, Python. Games, tools, Linux rice." width="100%">
+<img src="assets/banner.svg" alt="luchub-19: C++, Python, TypeScript. Games, tools, Linux rice." width="100%">
 
 </div>
 
-<img src="assets/h-phone.svg" alt="01 Phone" width="100%">
+<img src="assets/h-profile.svg" alt="Chapter 01: Player One" width="100%">
 
-<div align="center">
+<a href="https://github.com/luchub-19"><img src="assets/poster-profile.svg" alt="Player one: luchub-19 writes C++ and TypeScript. Public work: a raylib shooter, a hangout planner, a SwayFX desktop with a hand-written shell, and a study platform for data structures." width="100%"></a>
 
-<img src="assets/phone.svg" alt="In-game phone: luchub-19 writes C++, Rust and Python, builds games and tools, tweaks Linux desktops. Find me on GitHub." width="100%">
+<img src="assets/h-status.svg" alt="Chapter 02: Player status" width="100%">
 
-</div>
+<img src="assets/hud.svg" alt="Player HUD generated from my GitHub activity: wanted stars from commits in the last 30 days, bars from active days, yearly contributions and repos touched" width="100%">
 
-<img src="assets/h-status.svg" alt="02 Player status" width="100%">
-
-<div align="center">
-
-<img src="assets/hud.svg" alt="Player status HUD: wanted stars, health and armor bars generated from my GitHub activity" width="100%">
-
-</div>
-
-<img src="assets/h-missions.svg" alt="03 Missions" width="100%">
+<img src="assets/h-missions.svg" alt="Chapter 03: Missions" width="100%">
 
 <a href="https://github.com/luchub-19/vibeKing"><img src="assets/poster-vibeking.svg" alt="Mission 01: Hardcore Space Invaders, a C++ and raylib shooter with nine enemy types and a boss every fifth wave" width="100%"></a>
 
@@ -28,19 +20,11 @@
 
 <sub>Screenshots are the game's own built-in showcase scenes (combat, boss). Sprites: Kenney, CC0.</sub>
 
-<img src="assets/h-inventory.svg" alt="04 Inventory" width="100%">
+<img src="assets/h-loadout.svg" alt="Chapter 04: Loadout" width="100%">
+
+<img src="assets/loadout.svg" alt="Loadout: C and C++, Python, TypeScript, Linux" width="100%">
 
 <div align="center">
-
-<img src="assets/inventory.svg" alt="Inventory: C and C++, Python, TypeScript, Linux" width="100%">
-
-</div>
-
-<img src="assets/h-radio.svg" alt="05 Radio" width="100%">
-
-<div align="center">
-
-<img src="assets/radio.svg" alt="Luchub FM 19.11 now playing" width="100%">
 
 <br>
 
