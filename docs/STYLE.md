@@ -189,6 +189,7 @@ Mỗi cảnh ghi lại danh sách bất toàn của nó trong docstring.
 | **Barlow** Regular / SemiBold / Bold | OFL (đã có) | Tiểu sử, câu thoại, nhãn HUD, **mọi chữ và số được build trong GitHub Actions** |
 | **Anton** | OFL (đã có) | Dự phòng khi máy không có Pricedown; chữ lớn trong HUD (vì HUD build ở CI) |
 | **Tilt Neon** (`tools/fonts/TiltNeon-Variable.ttf`, trục mặc định) | OFL | **Chỉ dùng cho biển hiệu trong cảnh.** Không dùng cho UI hay chữ nội dung |
+| **Neonderthaw** (`tools/fonts/Neonderthaw-Regular.ttf`, OFL) | OFL | **Chỉ cho biển neon chữ viết tay một nét** (BAR, Vacancy; T1.4, chủ repo chọn 27/11). Glyph là ống rỗng viền đôi nên `neon.py` bù nét (stroke cùng màu) thành ống đặc. Không dùng cho UI |
 
 Kiểu chữ Pricedown đậm chất GTA: tô màu (`CREAM`, `PINK`, `GOLD`) + **viền mực `INK` dày** (6 px ở cỡ 78, 3 px ở cỡ 34–38) nằm dưới phần tô + **bóng đổ lệch 4–5 px** màu `INK` cho chữ lớn.
 Hàm mẫu: `gta_title()` trong `style_sample.py`.
@@ -214,6 +215,7 @@ Mọi chữ đều được chuyển thành path bằng fontTools. Pricedown, An
 | Sacramento | Chữ viết mảnh nét đơn | Thanh lịch, dễ bị mảnh quá khi thu nhỏ |
 | Monoton | Nhiều đường song song | Rất Deco/80s nhưng không phải nét ống đơn, trông giống logo hơn là neon |
 
+**Cập nhật T1.4:** Neonderthaw cũng đã vào `tools/fonts/` (kèm `OFL-Neonderthaw.txt`, nguồn `github.com/google/fonts`, `ofl/neonderthaw/`) cho biển viết tay.
 Đã chép `TiltNeon-Variable.ttf` + `OFL-TiltNeon.txt` vào `tools/fonts/` (nguồn: `github.com/google/fonts`, `ofl/tiltneon/`). Ảnh mẫu đã duyệt được render với cả 4 ứng viên; muốn render lại y hệt thì tải 4 font vào một thư mục rồi chạy `style_sample.py --neon <thư mục>`.
 
 ### 5.4 Ràng buộc giấy phép Pricedown (đọc từ EULA đi kèm file tải về)

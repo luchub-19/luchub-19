@@ -58,6 +58,11 @@ logo xếp tầng có cảnh trong ruột chữ, thêm mission `didau`, hồ sơ
 ### Quyết định cho T1.2 (2026-11-27)
 - Xe chữ ký: **trắng, targa, sọc mảnh 2 màu (hồng + cam)**, trạng thái chính **đèn lật mở + bật, đang chạy**.
 
+### Quyết định cho T1.4 (2026-11-27; PLAN mục G không có câu cho T1.4, chủ repo chốt trước khi vẽ)
+- Kiểu biển: **chữ khối Tilt Neon + chữ viết tay một nét (Neonderthaw) + hình ống (icon) + viền khung/đèn chạy**.
+- Nhấp nháy: **chữ hỏng chập chờn + khởi động lần lượt + bật/tắt cả biển (đối pha NO/VACANCY) + rung nhẹ độ sáng**.
+- Chữ mẫu: tên khách sạn đã chốt + biển phụ chung chung (VACANCY, BAR, OPEN). Phần cứng: **đủ ở gần, giản lược ở xa**.
+
 ### Quyết định cho T0.2 (2026-11-27) — chi tiết ở `docs/STYLE.md`
 - Bảng màu **lai: trời trên lạnh, chân trời ấm**; bóng lạnh, nắng ấm.
 - Xanh lá **chỉ làm màu phụ** (cọ, nước nông, pastel bạc hà, tiền mặt HUD); không có neon xanh lá.
@@ -126,6 +131,9 @@ tools/art/                Thư viện vẽ (T0.3, tách nguyên văn từ build_
                           (bánh, mắt đèn, đèn hậu, điểm neo), `car.defs()` (tiền tố `cr-`), `wheel_period()`; `sample_t12.py` (sinh `docs/style/t12-car.jpg`, `--anim` ra SVG động). `palette.py` có thêm bảng v3 (STYLE mục 1) + `tones()`, `LAYERS`; DEEP v3 tên là `SH_DEEP`.
                           T1.3 thêm vào `palm.py` (dưới hàm v2 `palm`, giữ nguyên): `Palm` + `palm_tree()` trả `PalmInfo` (3 loài coconut/royal/dwarf, 3 mức chi tiết theo `layer`,
                           viền nắng + viền neon `env`, SMIL 3 tầng cây/tán/tàu lá, `sway_t` dựng khung tĩnh); `sample_t13.py` (sinh `docs/style/t13-palm.jpg`, `--anim` ra SVG động).
+                          T1.4 thêm: `neon.py` (`Sign`/`Line` + `sign()`, `icon()`, `frame()`; ống = lõi + thân + 3 quầng, raceway, trụ kẹp, boot điện cực, dây, biến áp, giá blade;
+                          timeline nhấp nháy `TL` dùng chung cho khung tĩnh `t=` và SMIL `anim=True`; `glow=` theo ánh sáng nền), `sample_t14.py` (sinh `docs/style/t14-neon.jpg`, `--anim` ra SVG động).
+                          Font mới: `tools/fonts/Neonderthaw-Regular.ttf` (OFL). `deco.py` CHƯA gọi `neon.py` (biển tối thiểu của T1.1 giữ nguyên để không đổi ảnh đã duyệt): nối ở T2.3 hoặc khi chủ repo yêu cầu.
 tools/fetch_stats.py      GraphQL → data/stats.json (commit 30 ngày, ngày hoạt động, đóng góp năm)
 tools/preview.py          Bảng ảnh cục bộ bằng Chrome headless: mỗi mốc SMIL một cột khổ 390 px, nền trắng (`--dark` cho nền tối)
 tools/budget.py           Kiểm dung lượng: cả trang ≤ 5 MB, banner ≤ 1 MB (thoát mã 1 nếu vượt). Chỉ thư viện chuẩn
@@ -205,6 +213,10 @@ Hook "Hold the last line" lấy từ menu game vibeKing.
   Chủ repo chốt trước khi vẽ (27/11; PLAN mục G không có câu cho T1.3): thư viện **cọ dừa + cọ hoàng gia + cọ lùn**; màu lá **theo STYLE (gần INK + viền sáng)**; đung đưa **cả tán + từng tàu lá**.
   Ghi chú T1.3: một cây vector (L2, k ≈ 1) nặng khoảng 50 KB trong SVG động (đã dùng `<use>` cho viền và đường đi tương đối nguyên); 6 cây ≈ 300 KB, cân với ngân sách banner ≤ 1 MB.
   Cọ L0 mờ khí quyển 30% (ngoại lệ đã ghi ở STYLE 1.8). Lá khô rũ và quả dừa vẽ sau cùng nên che gốc tán.
+  T1.4 **xong, đã duyệt và commit** (chủ repo "duyệt ổn", 28/11; 5 câu mốc 🔶 theo phương án trong mẫu: giữ 4 màu neon, panel, flamingo, deco.py chưa nối neon.py), trang mẫu `docs/style/t14-neon.jpg`. Chạy lại: `<venv>/bin/python tools/art/sample_t14.py [--anim out.svg]`.
+  Ghi chú T1.4: chữ vẽ ở cỡ chuẩn 60 rồi co bằng `transform` (quầng và bộ lọc erode co theo). Biển trên mặt tiền cần **nền tối đỡ phía sau** (panel) mới đọc được trên nền cửa sổ; để biển trần chìm vào tường.
+  SVG động thử: 4 biển vector ≈ 260 KB (cả file 359 KB với nền WebP); khi vào banner (≤ 1 MB, còn cọ + xe) nên bớt SMIL: bỏ `hum` ở biển nhỏ, gộp timeline.
+  Chữ hỏng/khởi động dựng bằng `<animate opacity>` nhiều keyTimes (bước cứng cách 2 ms), cần xem trên GitHub thật khi vào banner.
   Tiếp theo: Giai đoạn 1 (T1.x) theo `docs/PLAN-v3.md`. T0.3 nhớ: build_assets dùng Anton thay khi thiếu Pricedown; Actions không dùng Pricedown. `style_sample.py` là nguyên mẫu của `palette.py` + `post.py`.
 - REFERENCES còn yếu: chưa có toàn văn review IGN/Eurogamer/GameSpot. Nếu chủ repo dán đoạn về HUD/điện thoại thì nâng độ tin cậy. Chưa xem được nội dung ảnh "Vice City Postcard" (chủ repo mở tay, không tải vào repo).
 - Đã xác nhận SMIL chạy trên GitHub thật. Vẫn cần kiểm tra nền sáng và app mobile.
