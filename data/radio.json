@@ -1,0 +1,8 @@
+{
+  "station": "LUCHUB FM 19.11",
+  "tracks": [
+    { "title": "Your track #1", "artist": "Artist name" },
+    { "title": "Your track #2", "artist": "Artist name" },
+    { "title": "Your track #3", "artist": "Artist name" }
+  ]
+}
