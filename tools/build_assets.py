@@ -4,75 +4,25 @@
 Chữ được chuyển thành đường vẽ (path) nên hiển thị đúng trên GitHub mà không cần font.
 Cần: pip install fonttools.   Chạy: python3 tools/build_assets.py
 Dữ liệu: data/stats.json (tools/fetch_stats.py), data/radio.json (bài hát tự chọn).
+
+Cấu trúc: thư viện vẽ nằm ở tools/art/ (palette, geom, text, sky, street, palm, car, props);
+file này chỉ ghép cảnh và ghi SVG.
 """
-import json, math, random
+import base64, json, math, random
 from pathlib import Path
-from fontTools.ttLib import TTFont
-from fontTools.pens.svgPathPen import SVGPathPen
-from fontTools.pens.transformPen import TransformPen
+
+from art.palette import PINK, HOT, ORANGE, GOLD, PURPLE, VIOLET, DEEP, INK, CYAN, CREAM, SKEW20
+from art.geom import n, star_path, hexagon
+from art.text import ANTON, REG, SEMI, BOLD, DIM, T, wrap
+from art.sky import clouds, birds
+from art.street import skyline, lamp
+from art.palm import palm
+from art.car import car
+from art.props import padlock, figure_scene, dial_scene
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "assets"
-FONTS = ROOT / "tools" / "fonts"
 OUT.mkdir(exist_ok=True)
-
-# ---- Bảng màu hoàng hôn trailer ---------------------------------------------
-PINK, HOT, ORANGE, GOLD = "#FF3E8A", "#FF5C7A", "#FF9A3C", "#FFD35A"
-PURPLE, VIOLET, DEEP, INK = "#7B3FE4", "#4B1D8F", "#1A0B3B", "#0B0320"
-CYAN, CREAM = "#35E6D8", "#FFF1E0"
-SKEW14, SKEW20 = math.tan(math.radians(14)), math.tan(math.radians(20))
-
-
-def n(v):
-    return ("%.1f" % v).rstrip("0").rstrip(".")
-
-
-class Face:
-    def __init__(self, file):
-        self.f = TTFont(FONTS / file)
-        self.gs = self.f.getGlyphSet()
-        self.cmap = self.f.getBestCmap()
-        self.upm = self.f["head"].unitsPerEm
-        self.hmtx = self.f["hmtx"]
-
-    def width(self, text, size, track=0):
-        k = size / self.upm
-        w = 0
-        for ch in text:
-            g = self.cmap.get(ord(ch))
-            w += (self.hmtx[g][0] * k if g else size * 0.3) + track
-        return w - track if text else 0
-
-    def path(self, text, size, x, y, anchor="start", track=0):
-        """Trả về chuỗi 'd' của path. y là đường baseline."""
-        k = size / self.upm
-        w = self.width(text, size, track)
-        if anchor == "middle":
-            x -= w / 2
-        elif anchor == "end":
-            x -= w
-        pen = SVGPathPen(self.gs, ntos=n)
-        cx = x
-        for ch in text:
-            g = self.cmap.get(ord(ch))
-            if g:
-                self.gs[g].draw(TransformPen(pen, (k, 0, 0, -k, cx, y)))
-                cx += self.hmtx[g][0] * k + track
-            else:
-                cx += size * 0.3 + track
-        return pen.getCommands()
-
-
-ANTON = Face("Anton-Regular.ttf")
-REG = Face("Barlow-Regular.ttf")
-SEMI = Face("Barlow-SemiBold.ttf")
-BOLD = Face("Barlow-Bold.ttf")
-DIM = 'opacity=".6"'
-
-
-def T(face, text, size, x, y, fill, anchor="start", track=0, extra=""):
-    d = face.path(text, size, x, y, anchor, track)
-    return f'<path d="{d}" fill="{fill}" {extra}/>'
 
 
 def svg(w, h, body, title, desc=""):
@@ -85,73 +35,14 @@ def write(name, content):
     print("ghi", name, len(content) // 1024, "KB")
 
 
-def star_path(cx, cy, r, ri=None):
-    ri = ri or r * 0.42
-    pts = []
-    for i in range(10):
-        a = -math.pi / 2 + i * math.pi / 5
-        rr = r if i % 2 == 0 else ri
-        pts.append(f"{n(cx + rr * math.cos(a))},{n(cy + rr * math.sin(a))}")
-    return "M" + " L".join(pts) + "Z"
-
-
 def panel(w, h):
     return (f'<rect width="{w}" height="{h}" rx="18" fill="#140729"/>'
             f'<rect x="1" y="1" width="{w - 2}" height="{h - 2}" rx="17" fill="none" stroke="{PINK}" stroke-opacity=".35"/>')
 
 
-def wrap(text, face, size, width):
-    lines, cur = [], ""
-    for w in text.split():
-        t = (cur + " " + w).strip()
-        if face.width(t, size) <= width or not cur:
-            cur = t
-        else:
-            lines.append(cur)
-            cur = w
-    if cur:
-        lines.append(cur)
-    return lines
-
-
 # =============================================================================
 # 1. BANNER
 # =============================================================================
-def palm(x, base_y, crown_dx, crown_y, scale, flip, delay):
-    s = -1 if flip else 1
-    cx, cy = x + s * crown_dx, crown_y
-    trunk = (f'<path d="M{n(x - 7 * scale)},{base_y} Q{n(x + s * crown_dx * 0.15)},{n((base_y + cy) / 2)} {n(cx)},{cy}" '
-             f'stroke="{INK}" stroke-width="{n(11 * scale)}" fill="none" stroke-linecap="round"/>')
-    leaves = []
-    for a, L in [(165, 150), (140, 165), (112, 135), (80, 135), (52, 165), (25, 150), (200, 105), (-20, 105)]:
-        L *= scale
-        r = math.radians(a)
-        tx, ty = cx + L * math.cos(r), cy - L * math.sin(r) + L * 0.38
-        mx, my = cx + L * 0.5 * math.cos(r), cy - L * 0.5 * math.sin(r) - L * 0.12
-        mx2, my2 = cx + L * 0.5 * math.cos(r), cy - L * 0.5 * math.sin(r) + L * 0.06
-        leaves.append(f'<path d="M{n(cx)},{n(cy)} Q{n(mx)},{n(my)} {n(tx)},{n(ty)} Q{n(mx2)},{n(my2)} {n(cx)},{n(cy)}Z" fill="{INK}"/>')
-    sway = (f'<animateTransform attributeName="transform" type="rotate" values="-1.6 {n(x)} {base_y};1.6 {n(x)} {base_y};-1.6 {n(x)} {base_y}" '
-            f'dur="7s" begin="{delay}s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>')
-    return f'<g>{sway}{trunk}{"".join(leaves)}</g>'
-
-
-def skyline(x0, x1, base, seed, tall, fill="#21094A", wins=True):
-    rnd = random.Random(seed)
-    out, wl, x = [], [], x0
-    while x < x1:
-        w = rnd.randint(22, 44)
-        h = rnd.randint(30, tall)
-        out.append(f'<rect x="{x}" y="{base - h}" width="{w}" height="{h + 2}" fill="{fill}"/>')
-        if rnd.random() < 0.6:  # tầng bậc Art Deco
-            out.append(f'<rect x="{x + w * 0.2:.0f}" y="{base - h - 9}" width="{w * 0.6:.0f}" height="10" fill="{fill}"/>')
-            out.append(f'<rect x="{x + w * 0.46:.0f}" y="{base - h - 20}" width="3" height="12" fill="{fill}"/>')
-        for _ in range(rnd.randint(1, 3)):
-            wx, wy = x + rnd.randint(4, max(5, w - 8)), base - rnd.randint(8, max(9, h - 6))
-            col = rnd.choice([PINK, GOLD, CYAN])
-            d = rnd.uniform(2.5, 6)
-            wl.append(f'<rect x="{wx}" y="{wy}" width="4" height="5" fill="{col}"><animate attributeName="opacity" values="1;.15;1" dur="{d:.1f}s" begin="{rnd.uniform(0, 4):.1f}s" repeatCount="indefinite"/></rect>')
-        x += w + rnd.randint(2, 8)
-    return "".join(out + (wl if wins else []))
 
 
 TAGLINES = ["C++  •  PYTHON  •  TYPESCRIPT", "GAMES  •  TOOLS  •  LINUX RICE", "COMMITS NEVER SLEEP"]
@@ -163,62 +54,6 @@ DEFS_COMMON = """
   <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 .95  0 0 0 0 .9  0 0 0 .9 -.25"/></filter>
  <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
 """
-
-
-def clouds(W, top, bot, seed):
-    rnd, out = random.Random(seed), []
-    for _ in range(9):
-        y, w, h = rnd.randint(top, bot), rnd.randint(200, 560), rnd.randint(5, 13)
-        x = rnd.randint(-100, W - 100)
-        dx = rnd.choice([-1, 1]) * rnd.randint(30, 80)
-        out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{h / 2}" fill="{rnd.choice(["#FF7AA8", "#FFB07A", "#B58CFF"])}" '
-                   f'opacity="{rnd.uniform(.14, .32):.2f}"><animate attributeName="x" values="{x};{x + dx};{x}" dur="{rnd.randint(30, 60)}s" repeatCount="indefinite"/></rect>')
-    return f'<g filter="url(#soft)">{"".join(out)}</g>'
-
-
-def birds(y, dur, begin):
-    flap_a, flap_b = "M-9,2 Q-4.5,-4 0,0 Q4.5,-4 9,2", "M-9,-3 Q-4.5,-9 0,0 Q4.5,-9 9,-3"
-    one = lambda dx, dy, i: (f'<path transform="translate({dx} {dy})" d="{flap_a}" fill="none" stroke="{INK}" stroke-width="1.6" stroke-linecap="round">'
-                             f'<animate attributeName="d" values="{flap_a};{flap_b};{flap_a}" dur="{0.7 + i * 0.05:.2f}s" repeatCount="indefinite"/></path>')
-    fm = [(0, 0), (-16, 7), (16, 7), (-32, 14), (32, 14), (-48, 21), (48, 21)]
-    return (f'<g><animateTransform attributeName="transform" type="translate" values="-120 {y};1320 {y}" dur="{dur}s" begin="{begin}s" repeatCount="indefinite"/>'
-            + "".join(one(dx, dy, i) for i, (dx, dy) in enumerate(fm)) + "</g>")
-
-
-def wheel(cx, cy=-8.5):
-    """Bánh xe: lốp + la-zăng 5 nan, quay theo chiều chạy (phải = thuận kim đồng hồ). 1520 px / 16 s ~ 95 px/s, chu vi 53 px -> ~0.56 s/vòng."""
-    spokes = "".join(f'<line x1="0" y1="0" x2="{4.6 * math.cos(math.radians(a)):.2f}" y2="{4.6 * math.sin(math.radians(a)):.2f}"/>' for a in range(-90, 270, 72))
-    return (f'<circle cx="{cx}" cy="{cy}" r="10" fill="#07021A"/>'
-            f'<g transform="translate({cx} {cy})"><circle r="8.5" fill="#150A2E"/><circle r="5.4" fill="#8E6FD0"/>'
-            f'<g stroke="#2A1255" stroke-width="1.5" stroke-linecap="round">{spokes}</g>'
-            f'<animateTransform attributeName="transform" additive="sum" type="rotate" values="0;360" dur=".56s" repeatCount="indefinite"/>'
-            f'<circle r="1.6" fill="{CREAM}"/></g>')
-
-
-def car(y, dur, begin):
-    """Xe thể thao 80s nhìn ngang, chạy sang PHẢI. Gốc toạ độ: y = mặt đường dưới bánh, mũi xe ở +x.
-    Dáng nêm: mui trước dài và thấp (x 30..56), buồng lái lùi về sau, đuôi cụt (x = -46)."""
-    body = "M-46,-8 L-46,-19 L-37,-20 L-24,-21 L-12,-31 L12,-31 L30,-21 L50,-17 L57,-12 L57,-8 L50,-6 L-40,-6 Z"
-    glass = "M-22,-22 L-11,-29.5 L10,-29.5 L26,-21.5 Z"
-    return f"""<g><animateTransform attributeName="transform" type="translate" values="-160 {y};1360 {y}" dur="{dur}s" begin="{begin}s" repeatCount="indefinite"/>
-<defs><filter id="lightbloom" filterUnits="userSpaceOnUse" x="-80" y="-50" width="160" height="60"><feGaussianBlur stdDeviation="3"/></filter></defs>
-<path d="M58,-11 L330,-23 L330,3 L58,-8Z" fill="url(#beam)" opacity=".55"/>
-<path d="M58,-10 L150,-8 L150,2 L58,-8Z" fill="url(#beam)" opacity=".5"/>
-<path d="M-46,0 Q4,5 58,0 L58,-2 L-46,-2Z" fill="#000" opacity=".5"/>
-<path d="{body}" fill="#3B1670"/>
-<path d="M-46,-19 L-37,-20 L-24,-21 L-12,-31 L12,-31 L30,-21 L50,-17 L57,-12" fill="none" stroke="{PINK}" stroke-width="1.4" stroke-linejoin="round"/>
-<path d="{glass}" fill="#150835"/><path d="M-9,-29 L2,-29 L-8,-22 L-17,-22Z" fill="{CYAN}" opacity=".28"/>
-<path d="M-6,-21 L-6,-7" stroke="#150835" stroke-width=".9" opacity=".7"/>
-<path d="M50,-6 L-40,-6" stroke="#0B0320" stroke-width="2"/>
-{wheel(-26)}{wheel(34)}
-<rect x="-46" y="-17.5" width="7" height="4.5" rx="1" fill="{HOT}"/><rect x="-47" y="-18.5" width="8" height="6.5" rx="2" fill="{HOT}" filter="url(#lightbloom)" opacity=".9"/>
-<path d="M54,-13.5 L57,-12 L57,-10 L53,-10.5Z" fill="#FFF1C0"/><circle cx="57" cy="-11.5" r="4.5" fill="{GOLD}" filter="url(#lightbloom)" opacity=".9"/></g>"""
-
-
-def lamp(x, base, h):
-    return (f'<rect x="{x - 1.5}" y="{base - h}" width="3" height="{h}" fill="{INK}"/><path d="M{x},{base - h} q0,-10 14,-10" stroke="{INK}" stroke-width="3" fill="none"/>'
-            f'<circle cx="{x + 14}" cy="{base - h - 7}" r="22" fill="url(#lampglow)"><animate attributeName="opacity" values=".85;1;.85" dur="3s" repeatCount="indefinite"/></circle>'
-            f'<circle cx="{x + 14}" cy="{base - h - 7}" r="3" fill="#FFF1C0"/>')
 
 
 def banner():
@@ -428,58 +263,11 @@ def hud(st):
 # =============================================================================
 # 5. ÁP PHÍCH NHIỆM VỤ (kiểu Rockstar 'Only in Leonida')
 # =============================================================================
-import base64
-
-
 SHOT_DIMS = {"vibeking-combat.jpg": (800, 600), "vibeking-boss.jpg": (800, 600), "vibeking-menu.jpg": (800, 600), "rice-desktop.jpg": (1800, 1013), "rice-desktop-bg.jpg": (640, 360), "rice-desktop-fg.jpg": (330, 366)}
 
 
 def b64img(name):
     return "data:image/jpeg;base64," + base64.b64encode((ROOT / "tools" / "shots" / name).read_bytes()).decode()
-
-
-def hexagon(cx, cy, r):
-    pts = [(cx + r * math.cos(math.radians(60 * i - 90)), cy + r * math.sin(math.radians(60 * i - 90))) for i in range(6)]
-    return " ".join(f"{n(x)},{n(y)}" for x, y in pts)
-
-
-def padlock(cx, cy, s):
-    return (f'<g transform="translate({cx} {cy}) scale({s})"><path d="M-34,-8 V-34 A34,34 0 0 1 34,-34 V-8" fill="none" stroke="{CREAM}" stroke-width="12" stroke-linecap="round"/>'
-            f'<rect x="-56" y="-8" width="112" height="86" rx="12" fill="{INK}" stroke="{CREAM}" stroke-width="6"/>'
-            f'<circle cx="0" cy="26" r="11" fill="{PINK}"/><rect x="-4.5" y="30" width="9" height="26" rx="3" fill="{PINK}"/></g>')
-
-
-def figure_scene(hx, hy, hr):
-    """Hình cắt nhân vật: bóng người đội mũ trùm nhìn từ sau, đứng trước thành phố hoàng hôn."""
-    bx, by = hx, hy + hr - 6
-    return (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath><g clip-path="url(#hexc)">'
-            f'<rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="url(#psky)"/>'
-            f'<circle cx="{hx + 34}" cy="{hy + 30}" r="46" fill="{GOLD}"/><circle cx="{hx + 34}" cy="{hy + 30}" r="46" fill="{ORANGE}" opacity=".35"/>'
-            f'{skyline(hx - hr, hx + hr, hy + 66, 41, 86, fill="#2A0F5E", wins=True)}'
-            f'<rect x="{hx - hr}" y="{hy + 66}" width="{2 * hr}" height="{hr}" fill="{INK}"/>'
-            f'<g transform="translate({bx} {by})"><path d="M-82,0 C-82,-64 -48,-88 0,-88 C48,-88 82,-64 82,0Z" fill="{INK}"/>'
-            f'<ellipse cx="0" cy="-104" rx="40" ry="42" fill="{INK}"/>'
-            f'<path d="M-82,0 C-82,-64 -48,-88 0,-88 C48,-88 82,-64 82,0" fill="none" stroke="{PINK}" stroke-width="2.5" opacity=".85"/>'
-            f'<path d="M-40,-104 C-40,-150 40,-150 40,-104" fill="none" stroke="{ORANGE}" stroke-width="2.5" opacity=".9"/></g></g>')
-
-
-def dial_scene(hx, hy, hr):
-    """Hình cắt: mặt đài FM có kim chạy và thanh equalizer."""
-    cy = hy - 36
-    eq = "".join(
-        f'<rect x="{hx - 72 + i * 16}" y="{hy + 66 - h}" width="9" height="{h}" rx="2" fill="{ORANGE if i % 2 else PINK}">'
-        f'<animate attributeName="y" values="{hy + 66 - h};{hy + 66 - h * 0.25:.0f};{hy + 66 - h}" dur="{0.6 + i * 0.12:.2f}s" repeatCount="indefinite"/>'
-        f'<animate attributeName="height" values="{h};{h * 0.25:.0f};{h}" dur="{0.6 + i * 0.12:.2f}s" repeatCount="indefinite"/></rect>'
-        for i, h in enumerate([32, 20, 34, 26, 34, 18, 30, 24, 32]))
-    return (f'<clipPath id="hexc"><polygon points="{hexagon(hx, hy, hr)}"/></clipPath><g clip-path="url(#hexc)">'
-            f'<rect x="{hx - hr}" y="{hy - hr}" width="{2 * hr}" height="{2 * hr}" fill="url(#psky)"/>'
-            f'<rect x="{hx - hr}" y="{hy + 66}" width="{2 * hr}" height="{hr}" fill="{INK}"/>'
-            f'<circle cx="{hx}" cy="{cy}" r="68" fill="#14062F" stroke="{CREAM}" stroke-width="3"/>'
-            f'<circle cx="{hx}" cy="{cy}" r="56" fill="none" stroke="{PINK}" stroke-width="4" stroke-dasharray="2 8" opacity=".7"/>'
-            f'{T(ANTON, "LUCHUB FM", 17, hx, cy - 14, CREAM, "middle", 2)}{T(ANTON, "19.11", 34, hx, cy + 24, GOLD, "middle", 2)}'
-            f'<g><animateTransform attributeName="transform" type="rotate" values="-24 {hx} {cy};24 {hx} {cy};-24 {hx} {cy}" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>'
-            f'<rect x="{hx - 2}" y="{cy - 66}" width="4" height="24" rx="2" fill="{PINK}"/></g>'
-            f'{eq}</g>')
 
 
 def poster(file, kicker, title_lines, hook, bio, quotes, chips, bg=None, fg=None, redacted=False, alt="", label="VIEW ON GITHUB", card=None, tracks=None, height=420):

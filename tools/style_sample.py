@@ -17,7 +17,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_assets import Face  # noqa: E402
+from art.text import Face  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -557,7 +557,7 @@ def blade_sign(s, x, top, face, rnd):
         neon_text(s, face, ch, 30, x, top + 38 + i * 37, PINK, NEON["pink"][1], anchor="middle", dim=(ch == "R"))
 
 
-def scene_light(s, y0, neon_face, rnd):
+def scene_light(s, y0, neon_face, rnd, annotate=True):
     W, H = 1200, 520
     s.group(f'transform="translate(0 {y0})"')
     s.raw(f'<svg x="0" y="0" width="{W}" height="{H}" viewBox="0 0 {W} {H}" overflow="hidden">',
@@ -641,12 +641,17 @@ def scene_light(s, y0, neon_face, rnd):
     palm(s, (1150, 540), (1070, 96), "L3", rnd, scale=1.25)
     palm(s, (30, 560), (52, 70), "L3", rnd, scale=1.1, n_fronds=8)
     s.raw("</svg>", "</svg>", "</svg>")
+    if annotate:
+        _annotations(s)
+    s.end()
+
+
+def _annotations(s):
     # chú thích
     for x, y, n in ((250, 300 + 92, 1), (330, 112, 2), (190, 292, 3), (470, 330, 4), (150, 352, 5), (800, 448, 6), (1000, 340, 7), (430, 420, 8)):
         marker(s, x, y, n)
     s.stroke("path", 'd="M146,505 L120,505 M128,499 L120,505 L128,511"', CREAM, 1.8)
     s.text(SEMI, "NẮNG: PHÍA TÂY, ĐÃ LẶN SAU DÃY KHÁCH SẠN", 12, 154, 510, CREAM, track=.8)
-    s.end()
 
 
 def legend(s, y0):

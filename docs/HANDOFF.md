@@ -106,9 +106,15 @@ tên đài radio trong game, app trên điện thoại, font logo. Dùng màu v�
 ```
 README.md                 HTML thuần (div/img/table), ảnh tương đối assets/*.svg + ảnh rắn từ nhánh output
 assets/*.svg              SINH RA TỰ ĐỘNG — đừng sửa tay
-tools/build_assets.py     Sinh tất cả SVG. Chữ → path bằng fontTools. Bảng màu ở đầu file.
+tools/build_assets.py     Điều phối: ghép cảnh (banner, chapter, hud, poster, loadout) và ghi SVG.
+tools/art/                Thư viện vẽ (T0.3, tách nguyên văn từ build_assets): palette, geom, text (fontTools → path), sky, street, palm, car, props.
+                          Chưa có deco/neon (thuộc T1.x). Import tương đối; chạy `python3 tools/build_assets.py` như cũ.
+                          T0.4 thêm: `scene.py` (Scene 4 lượt col/sh/em/ln), `post.py` (bloom, halftone, viền mực raster, quang sai, LUT 3D, vignette, grain),
+                          `render.py` (Chrome 2× song song, xuất WebP/JPEG theo ngân sách, nhúng base64, tile grain), `trial_t04.py` (sinh `lab/t04-pipeline/`).
+                          Cần venv có fonttools + pillow + numpy; chưa nối vào build_assets (banner v3 sẽ dùng ở T2.3).
 tools/fetch_stats.py      GraphQL → data/stats.json (commit 30 ngày, ngày hoạt động, đóng góp năm)
-tools/preview.py          Xem thử cục bộ bằng Chrome headless (đặt mốc thời gian SMIL)
+tools/preview.py          Bảng ảnh cục bộ bằng Chrome headless: mỗi mốc SMIL một cột khổ 390 px, nền trắng (`--dark` cho nền tối)
+tools/budget.py           Kiểm dung lượng: cả trang ≤ 5 MB, banner ≤ 1 MB (thoát mã 1 nếu vượt). Chỉ thư viện chuẩn
 tools/fonts/              Anton (tiêu đề), Barlow Regular/SemiBold/Bold (chữ nhỏ). Giấy phép OFL kèm theo.
 data/stats.json           Số liệu (Actions ghi đè mỗi ngày)
 data/radio.json           Danh sách bài radio (bài thật do chủ repo chọn)
@@ -122,7 +128,8 @@ python3 -m venv /tmp/v && /tmp/v/bin/pip install fonttools
 cd ~/luchub-19-profile
 python3 tools/fetch_stats.py luchub-19          # dùng `gh auth token`
 /tmp/v/bin/python tools/build_assets.py
-python3 tools/preview.py 6 /tmp/preview.png     # xem ảnh bằng Read
+python3 tools/preview.py 0,2.4,6,12 /tmp/preview.png   # bảng 4 mốc, khổ 390px, nền trắng (xem bằng Read)
+python3 tools/budget.py                        # kiểm ngân sách: cả trang ≤ 5 MB, banner ≤ 1 MB
 ```
 Lưu ý khi chạy Actions: số liệu Actions (GITHUB_TOKEN) có thể lệch số cục bộ vì quyền xem đóng góp riêng tư khác nhau;
 sau mỗi lần push, Actions sẽ ghi đè `assets/hud.svg` — luôn `git pull --rebase` trước khi push.
@@ -169,8 +176,11 @@ Hook "Hold the last line" lấy từ menu game vibeKing.
 - **Làm theo `docs/PLAN-v3.md`** (task + model gợi ý + mốc duyệt). T0.1 xong (`docs/REFERENCES.md`, chưa commit).
   T0.2 **xong, đã duyệt**: `docs/STYLE.md` + trang mẫu `docs/style/style-sample.jpg` (sinh bằng `tools/style_sample.py`, cần venv có fonttools + pillow + numpy;
   Pricedown ở `tools/fonts/local/` không commit; Tilt Neon đã ở `tools/fonts/`).
-  T0.0 (hotfix xe) đang dở trong working tree (`car()`/`wheel()` trong build_assets.py), chưa commit.
-  Tiếp theo: T0.3 ∥ T0.4 ∥ T0.5 (T0.3 nhớ: build_assets dùng Anton thay khi thiếu Pricedown; Actions không dùng Pricedown). `style_sample.py` là nguyên mẫu của `palette.py` + `post.py`.
+  T0.0 (hotfix xe) **xong, đã duyệt và commit riêng** (27/11): xe nêm mui trước dài, chùm đèn thấp từ mũi xe, đèn hậu trong thân, bánh trong làn, vạch đường đứng yên.
+  T0.3 **xong**: 12 SVG giống hệt từng byte và 48 PNG (12 SVG × mốc 0/2.4/6/12 s) diff = 0 so với trước khi tách.
+  T0.4 **code xong** (`tools/art/scene.py`, `post.py`, `trial_t04.py`). Đã đẩy 3 SVG thử lên nhánh tạm `lab-t04` (`lab/t04-pipeline/`, KHÔNG nằm trên main). Đã kiểm: GitHub phục vụ đúng `image/svg+xml` đủ dung lượng (kể cả 1,2 MB); Chrome hiển thị cả WebP lẫn JPEG nhúng trong SVG từ URL raw. **Chưa kiểm:** trang README thật trên GitHub (bot bị chặn), app mobile, nền tối, chữ R chập chờn, độ trễ tải file 1,2 MB. Chủ repo xem tay rồi báo; nếu WebP không hiện thì dùng JPEG. Xong thì xoá nhánh `lab-t04` (`git push origin --delete lab-t04`) và thư mục `lab/` cục bộ.
+  T0.5 **xong**: `tools/preview.py` xuất bảng nhiều mốc (cột 390 px, nền trắng, `--dark`); `tools/budget.py` kiểm ngân sách (cả trang ≤ 5 MB, banner ≤ 1 MB, đo byte gốc, 1 MB = 1 MiB). Hiện trang ~0.95 MB, banner 91 KB, đạt. Ảnh rắn từ nhánh `output` không đo được.
+  Tiếp theo: chủ repo xác nhận T0.4 trên GitHub (xem nhánh `lab-t04`); sau đó Giai đoạn 1 (T1.x). T0.3 nhớ: build_assets dùng Anton thay khi thiếu Pricedown; Actions không dùng Pricedown. `style_sample.py` là nguyên mẫu của `palette.py` + `post.py`.
 - REFERENCES còn yếu: chưa có toàn văn review IGN/Eurogamer/GameSpot. Nếu chủ repo dán đoạn về HUD/điện thoại thì nâng độ tin cậy. Chưa xem được nội dung ảnh "Vice City Postcard" (chủ repo mở tay, không tải vào repo).
 - Đã xác nhận SMIL chạy trên GitHub thật. Vẫn cần kiểm tra nền sáng và app mobile.
 - **Chương Safehouse (rice chính) — CHỜ.** Rice chính nằm ở laptop, nhiều lớp, chưa có repo chính thức; ảnh thật chưa có. Một lần đã đưa áp phích từ PC (Mint LTS, ít tùy biến) lên với câu "rebuilt by hand" → sai, đã gỡ. Đừng đưa lại ảnh PC này.
