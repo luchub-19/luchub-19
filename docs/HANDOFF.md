@@ -45,6 +45,20 @@ banner **Ocean Drive lúc chạng vạng**, **không có người làm nhân v�
 logo xếp tầng có cảnh trong ruột chữ, thêm mission `didau`, hồ sơ = bàn làm việc cạnh cửa sổ, loadout = vòng chọn vũ khí + đồ vật minh họa, cả trang 3–5 MB.
 **SMIL chạy tốt trên GitHub thật** (chủ repo xác nhận). Chủ repo không có ảnh game → dùng nguồn công khai.
 
+### Quyết định sau T0.1 (2026-11-27)
+- HUD v3: dưới 6 sao có **hàng icon bằng chứng** (kiểu CCTV/mặt/quần áo/xe/vũ khí), map sang số liệu GitHub công khai.
+- Tiền trên HUD: **2 số, ngân hàng (tím) = contribution năm × 10, tiền mặt (xanh lá) = commit 30 ngày × 10** (thay cho cash + earned).
+- Mặt tiền Art Deco: **giữ pastel**, thêm viền trắng và vài điểm vàng kim.
+
+### Quyết định cho T0.2 (2026-11-27) — chi tiết ở `docs/STYLE.md`
+- Bảng màu **lai: trời trên lạnh, chân trời ấm**; bóng lạnh, nắng ấm.
+- Xanh lá **chỉ làm màu phụ** (cọ, nước nông, pastel bạc hà, tiền mặt HUD); không có neon xanh lá.
+- Mặt trời **lặn sau dãy khách sạn** (đúng địa lý). Góc máy chuẩn: nhìn về phía bắc, khách sạn bên trái, biển bên phải.
+- Font neon: **Tilt Neon** (OFL, `tools/fonts/TiltNeon-Variable.ttf`), chỉ cho biển hiệu trong cảnh.
+- **T0.2 được duyệt toàn bộ ("duyệt ổn", 27/11)**: bảng màu, halftone ô 5 px/34%, nét 3/2/1/0 px, góc máy nhìn về bắc, vật cho dải tiêu đề chương, khung bản đồ/bưu thiếp cho didau, kiểu Pricedown viền mực + bóng đổ.
+- Chủ repo muốn chữ "đậm chất GTA hơn" → dùng **Pricedown** (Typodermic, tải từ DaFont) cho logo/tiêu đề/hook. Điều này thay luật cũ "giữ Anton" ở REFERENCES H1.
+  Theo EULA: font chỉ nằm ở `tools/fonts/local/` (gitignore), **không commit, không dùng trong Actions**, mỗi chuỗi chữ là một path cố định. Chi tiết: STYLE.md mục 5.4.
+
 ## 3. Phản hồi của chủ repo về bản v1 (QUAN TRỌNG)
 > "nhìn nó bị AI và không có chiều sâu gì cả. chưa được đầu tư gì, như kiểu làm qua loa."
 
@@ -62,8 +76,13 @@ Chẩn đoán của Claude (đồng ý với phản hồi):
   (Stuart Petri qua TechRadar, được Leonida Bay trích lại — thứ cấp). https://leonidabay.com/en/blog/gta-6-hud-map
 - Hội thoại điện thoại là **thẻ tin nhắn nổi** trên cảnh game, không phải màn hình điện thoại toàn khung.
   Đây là cách người viết SixCentral đọc video Extended Look, không phải Rockstar nói. https://sixcentral.co.uk/news/gta-6-hud-interface-explained
-- Thanh trạng thái màu hồng/cyan/tím kèm biểu tượng; hai số tiền xếp chồng góc trên phải; menu đồ có ô tròn
+- Thanh trạng thái màu hồng/cyan/tím kèm biểu tượng; menu đồ có ô tròn
   (nguồn: cùng bài SixCentral, cách đọc của tác giả). Nhãn UI viết hoa, ngắn, thực dụng.
+  **Đính chính (T0.1):** hai số tiền xếp chồng "15,150 / 700" nằm ở **màn trang bị**, không phải HUD ngoài phố. Xem `docs/REFERENCES.md` M3.
+
+**Nghiên cứu sau phát hành (T0.1, 2026-11-27): xem `docs/REFERENCES.md`**. Mỗi điểm có link và độ tin cậy, kèm danh sách nguồn không đọc được
+(IGN/Eurogamer chặn công cụ, GameSpot 403, Newswire chỉ có khung JS). Điểm mới đáng chú ý: lời dev Rockstar Stuart Petri qua TechRadar (Pricedown, minimap, sao, Wasted; HUD động),
+6 sao có trạng thái rỗng/trắng/nhấp nháy/đỏ, icon bằng chứng dưới sao, cảnh sát không hiện trên minimap, MiMo không thuộc Ocean Drive, pastel là lớp sơn lại (Horowitz).
 - Trang Rockstar `/VI/only-in-leonida`: mỗi nhân vật là một khối **ảnh nền + ảnh cắt tiền cảnh** (tên file `Hero_BG`/`Hero_FG`),
   một câu hook, đoạn tiểu sử ngôi thứ ba, vài **câu thoại trích dẫn**. Giọng khô, noir, ngắn.
   Ví dụ (công khai trên trang): "Another day in paradise, right?", "Viral videos. Viral hooks.", "Experience counts."
@@ -147,7 +166,12 @@ Hook "Hold the last line" lấy từ menu game vibeKing.
 - Giới thiệu bản thân sâu hơn (đang học/làm gì, vài điều ít ai đoán ra) — chỉ viết khi chủ repo cung cấp.
 
 ## 8. Việc còn lại
-- **Làm theo `docs/PLAN-v3.md`** (task + model gợi ý + mốc duyệt). Bắt đầu bằng T0.0 (hotfix xe) và T0.1 (nghiên cứu sau phát hành).
+- **Làm theo `docs/PLAN-v3.md`** (task + model gợi ý + mốc duyệt). T0.1 xong (`docs/REFERENCES.md`, chưa commit).
+  T0.2 **xong, đã duyệt**: `docs/STYLE.md` + trang mẫu `docs/style/style-sample.jpg` (sinh bằng `tools/style_sample.py`, cần venv có fonttools + pillow + numpy;
+  Pricedown ở `tools/fonts/local/` không commit; Tilt Neon đã ở `tools/fonts/`).
+  T0.0 (hotfix xe) đang dở trong working tree (`car()`/`wheel()` trong build_assets.py), chưa commit.
+  Tiếp theo: T0.3 ∥ T0.4 ∥ T0.5 (T0.3 nhớ: build_assets dùng Anton thay khi thiếu Pricedown; Actions không dùng Pricedown). `style_sample.py` là nguyên mẫu của `palette.py` + `post.py`.
+- REFERENCES còn yếu: chưa có toàn văn review IGN/Eurogamer/GameSpot. Nếu chủ repo dán đoạn về HUD/điện thoại thì nâng độ tin cậy. Chưa xem được nội dung ảnh "Vice City Postcard" (chủ repo mở tay, không tải vào repo).
 - Đã xác nhận SMIL chạy trên GitHub thật. Vẫn cần kiểm tra nền sáng và app mobile.
 - **Chương Safehouse (rice chính) — CHỜ.** Rice chính nằm ở laptop, nhiều lớp, chưa có repo chính thức; ảnh thật chưa có. Một lần đã đưa áp phích từ PC (Mint LTS, ít tùy biến) lên với câu "rebuilt by hand" → sai, đã gỡ. Đừng đưa lại ảnh PC này.
   Chỉ làm khi có (a) ảnh thật đã làm sạch từ laptop và (b) chủ repo mô tả. Không link `sway-ultricing` như thể nó là toàn bộ rice; không link repo `rice` (riêng tư).

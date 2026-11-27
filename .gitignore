@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+
+# Font không được phép phân phối lại (Typodermic Desktop EULA): chỉ để ở máy chủ repo
+tools/fonts/local/
