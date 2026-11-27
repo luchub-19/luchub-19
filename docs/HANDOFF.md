@@ -131,7 +131,7 @@ Các SVG: banner (1200×440), 5 tiêu đề mục, phone, hud, mission-1, missio
 6. Chưa kiểm tra trên GitHub thật (nền sáng/tối, di động).
 7. Chưa làm bộ đếm lượt xem; radio chưa có bài.
 
-**Chương 05 Safehouse (desktop rice thật):** `poster-safehouse.svg`. Chụp bằng `gnome-screenshot` sau `wmctrl -k on` (thu nhỏ hết cửa sổ), mở một kitty chạy `fastfetch --structure ...` (bỏ LocalIp/Host/Terminal), rồi `wmctrl -k off`.
+**[ĐÃ GỠ khỏi README] Chương 05 Safehouse:** chủ repo cho biết máy này (PC Linux Mint LTS) KHÔNG phải rice chính, ít tùy biến; rice chính, nhiều công sức nhất nằm ở **laptop**, và chưa có repo chính thức/đầy đủ. Áp phích cũ nói "rebuilt by hand" là sai. Đừng đưa lại ảnh PC này. Chờ chụp laptop. Cách chụp/làm sạch dưới đây vẫn dùng được cho laptop: `poster-safehouse.svg`. Chụp bằng `gnome-screenshot` sau `wmctrl -k on` (thu nhỏ hết cửa sổ), mở một kitty chạy `fastfetch --structure ...` (bỏ LocalIp/Host/Terminal), rồi `wmctrl -k off`.
 Làm sạch bằng `ffmpeg delogo` (tên thành phố của widget thời tiết, số tin chưa đọc trên icon Discord). Ảnh đầy đủ **không** đưa vào repo (có `user@hostname`, phần cứng); chỉ `tools/shots/rice-desktop-bg.jpg` (640px, làm mờ khi vẽ) và `rice-desktop-fg.jpg` (cắt logo Mint).
 Lần chụp đầu để lộ Discord, Firefox và cửa sổ làm việc nên đã xóa; **luôn làm sạch và xem lại ảnh trước khi commit**. Cửa sổ Cloudflare One Client tự ẩn khi mất focus (không phải lỗi). Máy: X11, Linux Mint 22.3, Cinnamon 6.6.9, MacTahoe theme, Plank, kitty.
 Repo `rice` là riêng tư nên áp phích không có liên kết.

@@ -637,11 +637,5 @@ if __name__ == "__main__":
            ["Some missions never make the credits."], ["???", "???"], redacted=True,
            alt="Mission 02: classified, details redacted", label="ACCESS DENIED")
     loadout()
-    chapter("h-safehouse.svg", "05", "SAFEHOUSE", "HOME BASE", "pink", False, 27)
-    poster("poster-safehouse.svg", "HOME BASE", ["SAFEHOUSE"], "Linux Mint, wearing someone else's clothes",
-           "Cinnamon on Linux Mint 22.3, rebuilt by hand to look like macOS Tahoe: a dark GTK theme, SF Pro, the Bibata cursor, a Plank dock and a terminal tuned until it feels native.",
-           ["It's not a Mac. It just looks like one.", "Everything is a config file."], ["LINUX MINT", "CINNAMON", "KITTY"],
-           bg="rice-desktop-bg.jpg", fg=("rice-desktop-fg.jpg", (0, 0, 330, 366)), label=None,
-           alt="Home base: a Linux Mint desktop themed to look like macOS Tahoe, with a transparent kitty terminal running fastfetch")
     if not tracks[0]["title"].startswith("Your track"):   # radio chỉ dựng khi có bài thật
         radio(tracks)
