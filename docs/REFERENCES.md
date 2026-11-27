@@ -131,6 +131,20 @@ MDPL là Miami Design Preservation League (tổ chức bảo tồn). `miamiandbe
 | D12 | **Chòi cứu hộ** kiểu "Nautical Art Deco" (William Lane) | "The lifeguard towers designed by William Lane in Miami Beach" | [city-deco] | **Xác minh** |
 | D13 | Chóp nhọn (spire/finial), đá khóa vòm (keystone) | Không trang nào nhắc | — | **Chưa có nguồn**. Dùng hạn chế |
 
+### 2.1b Bổ sung cho T1.5 (chòi cứu hộ, trời, chim) — 28/11
+Nguồn chòi cứu hộ (đọc qua đoạn trích của máy tìm kiếm, **chưa mở toàn văn từng trang**): [lg-miami] https://www.miamiandbeaches.com/things-to-do/art-and-culture/william-lanes-iconic-lifeguard-towers ·
+[lg-atlas] https://www.atlasobscura.com/articles/miami-beach-lifeguard-towers · [lg-csm] https://csmonitor.com/layout/set/amphtml/1998/0225/022598.home.home.2.html · [lg-city] https://miamibeachfl.gov/?p=41157
+
+| # | Điểm dùng trong T1.5 | Nguồn / cơ sở | Độ tin cậy |
+|---|---|---|---|
+| D14 | Chòi cứu hộ Miami Beach do **William Lane** thiết kế để thay các chòi bị **bão Andrew (1992)** làm hỏng; ghi năm 1995 | [lg-miami] · [lg-atlas] (các nguồn lệch nhau về năm và số chòi: 31 hay 36) | **Thứ cấp** (nhiều nguồn khớp phần "Lane + sau bão Andrew") |
+| D15 | Mỗi chòi một dáng, màu **pastel/rực**, pha Art Deco với văn hoá Caribe và pop thập niên 60 | [lg-csm] ("pastel structures blend 1920s Art Deco with 1960s pop-culture themes") · [lg-miami] | **Thứ cấp** |
+| D16 | Ba dáng chòi trong bộ sinh (hộp mái nghiêng, mái chữ A có tia nắng, tháp lục giác) | **Tự đặt**, lấy tinh thần "mỗi chòi một dáng". Không chép chòi cụ thể nào | **Suy đoán thiết kế** |
+| D17 | Số hiệu trên thân chòi (07, 21, 03…) | **Tự đặt.** Chưa xác minh chòi thật có số hiệu kiểu này | **Suy đoán** |
+| D18 | Mặt trời gần chân trời bị khí quyển làm **dẹt** (khúc xạ) | Hiện tượng vật lý phổ thông. Mức dẹt thật nhỏ hơn hình vẽ (cao ≈ 85% rộng); hình vẽ dùng 66% để tạo nhận diện | **Kiến thức chung, cố ý phóng đại** |
+| D19 | Bồ nông nâu (*Pelecanus occidentalis*) lướt thấp trên sóng ở bờ biển Florida | Kiến thức chung, **chưa dẫn nguồn trong repo** | **Chưa dẫn nguồn** |
+| D20 | Phố cắt (cross street) thẳng trục mặt trời lặn, vịnh Biscayne ở phía tây đảo | Địa lý Miami Beach (đảo chắn giữa biển Đại Tây Dương và vịnh Biscayne). Khung phụ "mặt trời dẹt" nhìn ra **nước phía tây** vì lý do này; không dùng cho banner | **Kiến thức chung** |
+
 ### 2.2 Màu sắc — ⚠ có mâu thuẫn (xem M4)
 | # | Điểm | Nguồn | Độ tin cậy |
 |---|---|---|---|

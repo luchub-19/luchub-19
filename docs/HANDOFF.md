@@ -1,6 +1,6 @@
 # HANDOFF — README profile GTA VI (đọc file này trước khi sửa)
 
-Repo: `luchub-19/luchub-19` (công khai). Thư mục máy: `~/luchub-19-profile`. Cập nhật lần cuối: 2026-11-27.
+Repo: `luchub-19/luchub-19` (công khai). Thư mục máy: `~/luchub-19-profile`. Cập nhật lần cuối: 2026-11-28.
 File này là nguồn sự thật cho các session sau. Đọc xong là biết: mục tiêu, đã quyết gì, đã làm gì, sai ở đâu, làm gì tiếp.
 
 ## 1. Mục tiêu và ràng buộc của chủ repo
@@ -62,6 +62,12 @@ logo xếp tầng có cảnh trong ruột chữ, thêm mission `didau`, hồ sơ
 - Kiểu biển: **chữ khối Tilt Neon + chữ viết tay một nét (Neonderthaw) + hình ống (icon) + viền khung/đèn chạy**.
 - Nhấp nháy: **chữ hỏng chập chờn + khởi động lần lượt + bật/tắt cả biển (đối pha NO/VACANCY) + rung nhẹ độ sáng**.
 - Chữ mẫu: tên khách sạn đã chốt + biển phụ chung chung (VACANCY, BAR, OPEN). Phần cứng: **đủ ở gần, giản lược ở xa**.
+
+### Quyết định cho T1.5 (2026-11-28; PLAN mục G không có câu cho T1.5, chủ repo chốt trước khi vẽ)
+- Mặt trời dẹt: **lộ qua khe giữa hai khách sạn** (phố cắt thẳng trục mặt trời, tháp xa che nửa dưới); thêm khung phụ chỉ có trời + nước nhìn về phía tây (vịnh Biscayne) để xem hình dẹt, **không dùng cho banner**.
+- Mây: **tháp mây tích có khối + nét mực** (đáy phẳng, nắng thấp chiếu từ dưới lên), phía đông thêm mây vệt tầng thấp.
+- Chòi cứu hộ: **3 mẫu, mỗi mẫu một dáng** (hộp mái nghiêng, mái chữ A có tia nắng, tháp lục giác), pastel + số hiệu nhỏ (số hiệu là tự đặt, REFERENCES D17).
+- Kể chuyện bằng bóng nhỏ: **cặp đôi đi dạo + người trượt patin**, **người câu cá cuối cầu tàu**, **bồ nông lướt thấp trên sóng** (một con đậu cột đèn), **mòng biển nhỏ ở xa**. Đồ vật kể chuyện trên cát: dấu chân từ vỉa hè xuống nước + dép bỏ lại.
 
 ### Quyết định cho T0.2 (2026-11-27) — chi tiết ở `docs/STYLE.md`
 - Bảng màu **lai: trời trên lạnh, chân trời ấm**; bóng lạnh, nắng ấm.
@@ -134,6 +140,11 @@ tools/art/                Thư viện vẽ (T0.3, tách nguyên văn từ build_
                           T1.4 thêm: `neon.py` (`Sign`/`Line` + `sign()`, `icon()`, `frame()`; ống = lõi + thân + 3 quầng, raceway, trụ kẹp, boot điện cực, dây, biến áp, giá blade;
                           timeline nhấp nháy `TL` dùng chung cho khung tĩnh `t=` và SMIL `anim=True`; `glow=` theo ánh sáng nền), `sample_t14.py` (sinh `docs/style/t14-neon.jpg`, `--anim` ra SVG động).
                           Font mới: `tools/fonts/Neonderthaw-Regular.ttf` (OFL). `deco.py` CHƯA gọi `neon.py` (biển tối thiểu của T1.1 giữ nguyên để không đổi ảnh đã duyệt): nối ở T2.3 hoặc khi chủ repo yêu cầu.
+                          T1.5 thêm: `sky.py` (dưới hàm v2 `clouds`/`birds`, giữ nguyên từng byte): `dome()` vòm trời lai + tham số `tod` (late/dusk/night, đêm có sao), `sun()` mặt trời dẹt có dải khói + chìm dưới chân trời,
+                          `cumulus()` tháp mây (vành sáng dưới-trái, thân tím, halftone, viền mực theo lớp, `drift=` cho SMIL), `streaks()`, `gull()`, `pelican()` (4 tư thế, vỗ cánh SMIL, đậu);
+                          `shore.py` (mới): `sea()` (hàng sóng theo phối cảnh + vệt phản chiếu neon, `t=` khung tĩnh hoặc SMIL, `parts=` tách raster/vector), `sand()` (mô cát, dấu chân, dép, cỏ đụn), `lifeguard()` (3 dáng `box|gable|hex`, 3 mức chi tiết), `pier()`, `fisherman()`;
+                          `street.py` (dưới hàm v2 `skyline`/`lamp`, giữ nguyên): `ground()` (vỉa hè + bó vỉa + đường), `deco_lamp()` (đèn chập chờn tuỳ chọn, trả điểm đậu), `person()`/`couple()`/`skater()` (bóng đổ toả ra xa đèn), `far_towers()`;
+                          `sample_t15.py` (sinh `docs/style/t15-sky-sea-street.jpg`, `--anim` ra SVG động). Palette không đổi (dùng lại v3); `PELICAN` (#2A1E4A) nằm ở `sky.py`.
 tools/fetch_stats.py      GraphQL → data/stats.json (commit 30 ngày, ngày hoạt động, đóng góp năm)
 tools/preview.py          Bảng ảnh cục bộ bằng Chrome headless: mỗi mốc SMIL một cột khổ 390 px, nền trắng (`--dark` cho nền tối)
 tools/budget.py           Kiểm dung lượng: cả trang ≤ 5 MB, banner ≤ 1 MB (thoát mã 1 nếu vượt). Chỉ thư viện chuẩn
@@ -217,7 +228,13 @@ Hook "Hold the last line" lấy từ menu game vibeKing.
   Ghi chú T1.4: chữ vẽ ở cỡ chuẩn 60 rồi co bằng `transform` (quầng và bộ lọc erode co theo). Biển trên mặt tiền cần **nền tối đỡ phía sau** (panel) mới đọc được trên nền cửa sổ; để biển trần chìm vào tường.
   SVG động thử: 4 biển vector ≈ 260 KB (cả file 359 KB với nền WebP); khi vào banner (≤ 1 MB, còn cọ + xe) nên bớt SMIL: bỏ `hum` ở biển nhỏ, gộp timeline.
   Chữ hỏng/khởi động dựng bằng `<animate opacity>` nhiều keyTimes (bước cứng cách 2 ms), cần xem trên GitHub thật khi vào banner.
-  Tiếp theo: Giai đoạn 1 (T1.x) theo `docs/PLAN-v3.md`. T0.3 nhớ: build_assets dùng Anton thay khi thiếu Pricedown; Actions không dùng Pricedown. `style_sample.py` là nguyên mẫu của `palette.py` + `post.py`.
+  T1.5 **xong, đã duyệt và commit** (chủ repo "duyệt hết", 28/11; 5 câu mốc 🔶 theo phương án trong mẫu: giữ mặt trời dẹt 66%, bồ nông, tháp lục giác, cầu tàu, nét mây L1), trang mẫu `docs/style/t15-sky-sea-street.jpg` (9 phần: cảnh chính có đánh số 10 chi tiết bắt buộc, mặt trời dẹt ba độ cao, cận cảnh, 6 chòi, 4 mức chi tiết, người + chim, theo giờ, sóng 6 khung). Chạy lại: `<venv>/bin/python tools/art/sample_t15.py [--anim out.svg]`.
+  Ghi chú T1.5: (1) **Lớp vector SMIL luôn nằm trên nền raster** nên bọt/bồ nông vector che luôn chòi và cọ đứng trước chúng. Khi dựng banner (T2.3/T2.4) cần tách nền raster làm hai lớp
+  (sau: trời + biển; trước: vật đứng trên biển, WebP có alpha) rồi kẹp lớp SMIL ở giữa, hoặc chỉ làm bọt tĩnh. SVG động thử 196 KB (nền WebP ~160 KB + vector 17 KB); chưa đưa mây trôi, đung đưa cọ, người đi, cờ, đèn chập chờn vào.
+  (2) Cảnh chính theo cách "sân khấu 2.5D" đã duyệt ở STYLE: khách sạn nhìn thẳng, biển bên phải cùng đường chân trời; phố cắt dựng bằng hình thang hội tụ về mặt trời. T2.1 quyết bố cục thật.
+  (3) Hình bồ nông ở cỡ nhỏ ổn, ở cỡ lớn (k ≥ 3) còn hơi "vịt" (thân mập); cầu tàu là hình thang phối cảnh, đọc rõ nhất ở cận cảnh có người câu cá.
+  (4) Khung phụ mặt trời dẹt dùng nước phía tây (vịnh) nên có cột lấp lánh; ở banner (nhìn bắc) biển phía đông **không** phản chiếu mặt trời (STYLE 1.2).
+  Tiếp theo: T1.6 (đồ vật Safehouse; cần hỏi chủ repo các câu ở PLAN mục G), rồi Giai đoạn 2 (banner) theo `docs/PLAN-v3.md`. T0.3 nhớ: build_assets dùng Anton thay khi thiếu Pricedown; Actions không dùng Pricedown. `style_sample.py` là nguyên mẫu của `palette.py` + `post.py`.
 - REFERENCES còn yếu: chưa có toàn văn review IGN/Eurogamer/GameSpot. Nếu chủ repo dán đoạn về HUD/điện thoại thì nâng độ tin cậy. Chưa xem được nội dung ảnh "Vice City Postcard" (chủ repo mở tay, không tải vào repo).
 - Đã xác nhận SMIL chạy trên GitHub thật. Vẫn cần kiểm tra nền sáng và app mobile.
 - **Chương Safehouse (rice chính) — CHỜ.** Rice chính nằm ở laptop, nhiều lớp, chưa có repo chính thức; ảnh thật chưa có. Một lần đã đưa áp phích từ PC (Mint LTS, ít tùy biến) lên với câu "rebuilt by hand" → sai, đã gỡ. Đừng đưa lại ảnh PC này.
