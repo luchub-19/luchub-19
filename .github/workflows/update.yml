@@ -11,6 +11,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-profile
+  cancel-in-progress: false
+
 jobs:
   stats:
     runs-on: ubuntu-latest
@@ -31,7 +35,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/stats.json assets
-          git diff --staged --quiet || git commit -m "chore: update stats" && git push
+          git diff --staged --quiet && exit 0
+          git commit -m "chore: update stats"
+          git pull --rebase
+          git push
 
   snake:
     runs-on: ubuntu-latest
