@@ -38,6 +38,13 @@ File này là nguồn sự thật cho các session sau. Đọc xong là biết: 
   cần `xvfb` + `xdotool` (apt, chủ repo chạy sudo) để chạy ở màn hình ảo, tránh đụng desktop thật. Sprite `atlas.png` của game là Kenney CC0 (khử màu), dùng làm hình cắt được.
 - Thẻ CLASSIFIED: **giữ nhưng làm đẹp hơn** (hồ sơ mật có chủ đích, không lộ tên dự án riêng tư).
 
+### Quyết định đợt v3 (2026-11-27, chỉ lập plan, chưa làm) — xem `docs/PLAN-v3.md`
+Phản hồi: trang vẫn "bị AI, bóng bẩy bên ngoài nhưng rỗng và sơ sài"; xe và đèn ở banner ngược hướng.
+Chốt: làm lại **toàn trang** theo kiểu **tranh minh họa Rockstar** (code thủ tục + hậu kỳ raster, không sinh ảnh AI), định dạng lai raster + SVG/SMIL,
+banner **Ocean Drive lúc chạng vạng**, **không có người làm nhân vật chính** (kể chuyện bằng đồ vật; được có bóng người nhỏ ở xa), xe thể thao 80s,
+logo xếp tầng có cảnh trong ruột chữ, thêm mission `didau`, hồ sơ = bàn làm việc cạnh cửa sổ, loadout = vòng chọn vũ khí + đồ vật minh họa, cả trang 3–5 MB.
+**SMIL chạy tốt trên GitHub thật** (chủ repo xác nhận). Chủ repo không có ảnh game → dùng nguồn công khai.
+
 ## 3. Phản hồi của chủ repo về bản v1 (QUAN TRỌNG)
 > "nhìn nó bị AI và không có chiều sâu gì cả. chưa được đầu tư gì, như kiểu làm qua loa."
 
@@ -136,11 +143,12 @@ Hook "Hold the last line" lấy từ menu game vibeKing.
 ## 7. Câu hỏi MỞ cho chủ repo
 - Bộ đếm lượt xem: có chấp nhận một dịch vụ ngoài không? (chưa làm)
 - Rice chính ở laptop: mô tả đúng là gì (WM/compositor, shell, điểm đặc biệt)? `sway-ultricing` chỉ là một phần.
-- Có muốn thêm poster riêng cho dự án công khai khác (`sway-ultricing`, `didau`, `dsa-web1.0`) làm nhiệm vụ mới không?
+- Đã chốt thêm `didau`; chưa làm `sway-ultricing`, `dsa-web1.0`. Các câu hỏi cho từng mốc của v3: xem PLAN-v3 mục G.
 - Giới thiệu bản thân sâu hơn (đang học/làm gì, vài điều ít ai đoán ra) — chỉ viết khi chủ repo cung cấp.
 
 ## 8. Việc còn lại
-- **Chủ repo kiểm tra trên GitHub thật**: nền sáng/tối, điện thoại, và hiệu ứng SMIL có chạy không. Chưa ai xác nhận trên trang thật (mới xem bằng Chrome trong máy). Phản hồi này quyết định sửa gì tiếp.
+- **Làm theo `docs/PLAN-v3.md`** (task + model gợi ý + mốc duyệt). Bắt đầu bằng T0.0 (hotfix xe) và T0.1 (nghiên cứu sau phát hành).
+- Đã xác nhận SMIL chạy trên GitHub thật. Vẫn cần kiểm tra nền sáng và app mobile.
 - **Chương Safehouse (rice chính) — CHỜ.** Rice chính nằm ở laptop, nhiều lớp, chưa có repo chính thức; ảnh thật chưa có. Một lần đã đưa áp phích từ PC (Mint LTS, ít tùy biến) lên với câu "rebuilt by hand" → sai, đã gỡ. Đừng đưa lại ảnh PC này.
   Chỉ làm khi có (a) ảnh thật đã làm sạch từ laptop và (b) chủ repo mô tả. Không link `sway-ultricing` như thể nó là toàn bộ rice; không link repo `rice` (riêng tư).
 - Nếu GitHub không hiển thị tốt SMIL/mix: phương án dự phòng là xuất GIF hoặc ảnh tĩnh cho phần quan trọng (chưa làm).
