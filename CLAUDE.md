@@ -1,5 +1,8 @@
 # Luật cho AI khi làm việc trong repo này
 
+**Đọc `docs/HANDOFF.md` trước tiên** (mục tiêu, quyết định, phản hồi của chủ repo, nghiên cứu, điểm yếu, câu hỏi mở).
+Sau mỗi đợt thay đổi lớn, cập nhật HANDOFF.md (mục 6, 7, 8) cho session sau.
+
 - **Không thêm Claude làm co-author.** Không đặt dòng `Co-Authored-By: Claude ...` hay
   `Generated with Claude Code` trong commit message, mô tả PR hoặc bất cứ đâu. Commit chỉ mang tên chủ repo.
 - Không link hay nhắc tên repo riêng tư trên README công khai.
