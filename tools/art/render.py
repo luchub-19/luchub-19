@@ -122,7 +122,7 @@ def grain_tile(size=128, seed=7, levels=6) -> bytes:
 
 # --------------------------------------------------------------------------- SVG cuối
 def embed_svg(W, H, bg: bytes, mime: str, overlay="", ui="", defs="", title="", desc="",
-              grain: bool | bytes = True, grain_opacity=.07) -> str:
+              grain: bool | bytes = True, grain_opacity=.07, grain_size=128) -> str:
     """Ghép SVG cuối. overlay: vật động vector (SMIL) vẽ trên nền. ui: chữ/số liệu sắc nét vẽ trên cùng.
     defs: định nghĩa (filter, gradient...) mà overlay/ui cần. id nên có tiền tố riêng để khỏi đụng nhau."""
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img">']
@@ -133,8 +133,9 @@ def embed_svg(W, H, bg: bytes, mime: str, overlay="", ui="", defs="", title="", 
     d = defs
     if grain:
         tile = grain if isinstance(grain, bytes) else grain_tile()
-        d += ('<pattern id="rn-grain" width="128" height="128" patternUnits="userSpaceOnUse">'
-              f'<image href="{data_uri(tile, "image/png")}" width="128" height="128"/></pattern>')
+        gs = grain_size
+        d += (f'<pattern id="rn-grain" width="{gs}" height="{gs}" patternUnits="userSpaceOnUse">'
+              f'<image href="{data_uri(tile, "image/png")}" width="{gs}" height="{gs}"/></pattern>')
     if d:
         parts.append(f"<defs>{d}</defs>")
     parts.append(f'<image href="{data_uri(bg, mime)}" width="{W}" height="{H}"/>')
