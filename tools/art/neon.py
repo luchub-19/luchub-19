@@ -636,6 +636,8 @@ def sign(s, x, y, spec: Sign, k=1.0, layer="L2", sun=-1, t=0.0, anim=False, rot=
                 tl, nm = tl_startup(idx, nlet, d.dur, d.seed), f"startup{idx}"
             elif ln.mode in ("blink", "alt"):
                 tl, nm = tl_blink(d.dur, 1.5, phase), ln.mode
+            elif ln.mode == "off":              # T2.4: biến thể tắt hẳn để cắt mảnh vá hoạt ảnh (không dùng ở cảnh tĩnh)
+                tl, nm = TL([(0, 0.0), (d.dur, 0.0)], d.dur), None
             else:
                 tl, nm = tl_steady(d.dur), None
             r.glyph(F.path(ch, S0, 0, 0), ln.color, bridge, tl, ln.font, f'transform="translate({lx:.2f} {by:.2f}) scale({sz / S0:.4f})"', name=nm)
